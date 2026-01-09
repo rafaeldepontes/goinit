@@ -1,9 +1,14 @@
-package project
+package builder
 
 import (
 	"context"
+	"log"
 
 	"github.com/spf13/cobra"
+)
+
+const (
+	OwnerPropertyMode = 0644
 )
 
 // This should be an interface maybe... But i'm not willing to make this change
@@ -16,9 +21,9 @@ type RootCmd struct {
 // NewRootCmd inits a new rootcmd.
 func NewRootCmd() *RootCmd {
 	rc := &RootCmd{}
-	cmd := &cobra.Command{}
 
-	// cmd.AddCommand(rc.)
+	cmd := &cobra.Command{}
+	cmd.AddCommand(rc.BuildProject())
 
 	rc.cmd = cmd
 	return rc
@@ -38,28 +43,31 @@ func (rc *RootCmd) ExecuteContext(ctx context.Context) error {
 //
 // When called it will make some questions to the user and should build the whole project from it, so it's basically a bunch of
 // of edge cases...
-func (rc *RootCmd) aaaa() *cobra.Command {
+func (rc *RootCmd) BuildProject() *cobra.Command {
 	return &cobra.Command{
 		Use:   "gini build",
 		Short: "Build the project based on some questions",
 		Run: func(cmd *cobra.Command, args []string) {
-			// Project idea:
-			// ---------------------
-			// gini build
-			//
-			// >> Do you want a database on your docker-compose? (y/n)
-			// >>>> Select the database:
-			// >>>> [1]
-			// >>>> [2]
-			// >>>> [3]
-			//
-			// >> Do you want a Dockerfile integrated on your docker-compose? (y/n)
-			//
-			// >> Do you want a message broker on your docker-compose? (y/n)
-			// >>>> Select the message broker:
-			// >>>> [1]
-			// >>>> [2]
-			// ---------------------
+			if hasDocker() {
+				// Manages part of the docker logic
+				if err := createDocker(); err != nil {
+					log.Fatalln("[ERROR] ", err)
+					return
+				}
+
+				// Manager the database
+				if err := databaseFlow(); err != nil {
+					log.Fatalln("[ERROR] ", err)
+					return
+				}
+
+				// >> Do you want a message broker on your docker-compose? (y/n)
+				// >>>> Select the message broker:
+				// >>>> [1]
+				// >>>> [2]
+
+			}
+			// Create the go mod
 		},
 	}
 }
