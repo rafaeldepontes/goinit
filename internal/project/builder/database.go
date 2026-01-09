@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/rafaeldepontes/goinit/internal/log"
 	"github.com/rafaeldepontes/goinit/internal/project/builder/templates"
 )
 
@@ -26,12 +27,12 @@ const (
 )
 
 // DockerFlow handles the logic behind the docker-compose and the dockerfile, it appears only once at the start.
-func databaseFlow(name string) error {
+func databaseFlow(name string, log *log.Logger) error {
 	scanner := bufio.NewScanner(os.Stdin)
-	if hasDatabase(scanner) {
-		fmt.Println(">>>> Select the database: ")
+	if hasDatabase(scanner, log) {
+		log.InfoPrefixln(">>>>", " Select the database: ")
 		for i := 0; i < len(databaseOptions); i++ {
-			fmt.Printf(">>>> [%d] %s\n", i+1, databaseOptions[i+1])
+			log.InfoPrefixf(">>>>", " [%d] %s\n", i+1, databaseOptions[i+1])
 		}
 
 		if scanner.Scan() {
@@ -57,7 +58,7 @@ func databaseFlow(name string) error {
 				}
 
 			default:
-				fmt.Println("As none was selected, using PostgreSQL as the default...")
+				log.Warningln("As none was selected, using PostgreSQL as the default...")
 				if err := createCompose(name, templates.PostgresCompose); err != nil {
 					return err
 				}
@@ -84,8 +85,8 @@ func createCompose(pn string, db []byte) error {
 }
 
 // hasDatabase checks to see if the user want or not a database in their docker-compose.
-func hasDatabase(scanner *bufio.Scanner) bool {
-	fmt.Print(">> Do you want a database on your docker-compose? (y/n) ")
+func hasDatabase(scanner *bufio.Scanner, log *log.Logger) bool {
+	log.InfoPrefix(">>", " Do you want a database on your docker-compose? (y/n) ")
 
 	ans := "n"
 	if scanner.Scan() {

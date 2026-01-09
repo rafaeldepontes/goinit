@@ -2,11 +2,11 @@ package builder
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/rafaeldepontes/goinit/internal/log"
 	"github.com/rafaeldepontes/goinit/internal/project/builder/templates"
 )
 
@@ -16,9 +16,9 @@ const (
 )
 
 // hasDocker handles the logic behind the docker-compose and the dockerfile, it appears only once at the start.
-func hasDocker() bool {
+func hasDocker(log *log.Logger) bool {
 	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Print(">> Are you going to use Docker? (y/n) ")
+	log.InfoPrefix(">>", " Are you going to use Docker? (y/n) ")
 
 	ans := "n"
 	if scanner.Scan() {

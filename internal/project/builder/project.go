@@ -2,10 +2,10 @@ package builder
 
 import (
 	"context"
-	"log"
 	"os"
 	"path/filepath"
 
+	"github.com/rafaeldepontes/goinit/internal/log"
 	"github.com/spf13/cobra"
 )
 
@@ -14,15 +14,18 @@ const (
 )
 
 // This should be an interface maybe... But i'm not willing to make this change
-// so this will be a struct holding some of the logic and then I will update it
+// so this will be a struct holding some of the rc.log.c and then I will update it
 // as needed.
 type RootCmd struct {
 	cmd *cobra.Command
+	Log *log.Logger
 }
 
 // NewRootCmd inits a new rootcmd.
 func NewRootCmd() *RootCmd {
-	rc := &RootCmd{}
+	rc := &RootCmd{
+		Log: log.NewLogger(),
+	}
 
 	cmd := &cobra.Command{}
 	cmd.AddCommand(rc.BuildProject())
@@ -51,33 +54,33 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 		Short: "Build the project based on some questions",
 		Run: func(cmd *cobra.Command, args []string) {
 			// Create the go mod
-			projectName, err := createGoMod()
+			projectName, err := createGoMod(rc.Log)
 			if err != nil {
-				log.Fatalln("[ERROR] didn't create the go.mod: ", err)
+				rc.Log.Errorln("[ERROR] didn't create the go.mod: " + err.Error())
 				return
 			}
 
 			if err := createDir(projectName); err != nil {
-				log.Fatalln("[ERROR] didn't create the dir: ", err)
+				rc.Log.Errorln("[ERROR] didn't create the dir: " + err.Error())
 				return
 			}
 
-			if hasDocker() {
-				// Manages part of the docker logic
+			if hasDocker(rc.Log) {
+				// Manages part of the docker rc.log.c
 				if err := createDocker(projectName); err != nil {
-					log.Fatalln("[ERROR] didn't create the docker-compose/Dockerfile: ", err)
+					rc.Log.Errorln("[ERROR] didn't create the docker-compose/Dockerfile: " + err.Error())
 					return
 				}
 
 				// Manages brokers
-				if err := messageBrokerFlow(projectName); err != nil {
-					log.Fatalln("[ERROR] didn't create the message broker: ", err)
+				if err := messageBrokerFlow(projectName, rc.Log); err != nil {
+					rc.Log.Errorln("[ERROR] didn't create the message broker: " + err.Error())
 					return
 				}
 
 				// Manages databases
-				if err := databaseFlow(projectName); err != nil {
-					log.Fatalln("[ERROR] didn't create the database: ", err)
+				if err := databaseFlow(projectName, rc.Log); err != nil {
+					rc.Log.Errorln("[ERROR] didn't create the database: " + err.Error())
 					return
 				}
 			}
