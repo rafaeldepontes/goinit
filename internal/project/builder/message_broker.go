@@ -19,7 +19,7 @@ const (
 	Kafka    = "2"
 )
 
-func messageBrokerFlow() error {
+func messageBrokerFlow(name string) error {
 	scanner := bufio.NewScanner(os.Stdin)
 	if hasMessageBroker(scanner) {
 		fmt.Println(">>>> Select the message broker: ")
@@ -30,18 +30,18 @@ func messageBrokerFlow() error {
 		if scanner.Scan() {
 			switch strings.TrimSpace(scanner.Text()) {
 			case RabbitMQ:
-				if err := createCompose(templates.RabbitMQCompose); err != nil {
+				if err := createCompose(name, templates.RabbitMQCompose); err != nil {
 					return err
 				}
 
 			case Kafka:
-				if err := createCompose(templates.KafkaCompose); err != nil {
+				if err := createCompose(name, templates.KafkaCompose); err != nil {
 					return err
 				}
 
 			default:
 				fmt.Println("As none was selected, using RabbitMQ as the default...")
-				if err := createCompose(templates.RabbitMQCompose); err != nil {
+				if err := createCompose(name, templates.RabbitMQCompose); err != nil {
 					return err
 				}
 			}

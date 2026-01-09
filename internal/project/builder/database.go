@@ -26,7 +26,7 @@ const (
 )
 
 // DockerFlow handles the logic behind the docker-compose and the dockerfile, it appears only once at the start.
-func databaseFlow() error {
+func databaseFlow(name string) error {
 	scanner := bufio.NewScanner(os.Stdin)
 	if hasDatabase(scanner) {
 		fmt.Println(">>>> Select the database: ")
@@ -37,28 +37,28 @@ func databaseFlow() error {
 		if scanner.Scan() {
 			switch strings.TrimSpace(scanner.Text()) {
 			case Postgres:
-				if err := createCompose(templates.PostgresCompose); err != nil {
+				if err := createCompose(name, templates.PostgresCompose); err != nil {
 					return err
 				}
 
 			case MySql:
-				if err := createCompose(templates.MySQLCompose); err != nil {
+				if err := createCompose(name, templates.MySQLCompose); err != nil {
 					return err
 				}
 
 			case SqlServer:
-				if err := createCompose(templates.SQLServerCompose); err != nil {
+				if err := createCompose(name, templates.SQLServerCompose); err != nil {
 					return err
 				}
 
 			case Mongo:
-				if err := createCompose(templates.MongoCompose); err != nil {
+				if err := createCompose(name, templates.MongoCompose); err != nil {
 					return err
 				}
 
 			default:
 				fmt.Println("As none was selected, using PostgreSQL as the default...")
-				if err := createCompose(templates.PostgresCompose); err != nil {
+				if err := createCompose(name, templates.PostgresCompose); err != nil {
 					return err
 				}
 
@@ -68,8 +68,9 @@ func databaseFlow() error {
 	return nil
 }
 
-func createCompose(db []byte) error {
-	f, err := os.OpenFile(DockerCompose, os.O_RDWR|os.O_APPEND, OwnerPropertyMode)
+func createCompose(pn string, db []byte) error {
+	name := fmt.Sprintf("./%s/%s", pn, DockerCompose)
+	f, err := os.OpenFile(name, os.O_RDWR|os.O_APPEND, OwnerPropertyMode)
 	if err != nil {
 		return err
 	}

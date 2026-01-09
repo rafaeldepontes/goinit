@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/rafaeldepontes/goinit/internal/project/builder/templates"
@@ -28,7 +29,7 @@ func hasDocker() bool {
 
 // createDocker creates the DockerFile and the docker-compose for the user, initally they are empty
 // but, as the user answers the questions, they should be populated.
-func createDocker() error {
+func createDocker(name string) error {
 	if err := os.WriteFile(
 		DockerFile,
 		templates.DockerFile,
@@ -45,5 +46,9 @@ func createDocker() error {
 		return err
 	}
 
-	return nil
+	if err := os.Rename(DockerFile, filepath.Join(name, DockerFile)); err != nil {
+		return err
+	}
+
+	return os.Rename(DockerCompose, filepath.Join(name, DockerCompose))
 }
