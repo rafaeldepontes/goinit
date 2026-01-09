@@ -3,6 +3,8 @@ package builder
 import (
 	"context"
 	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -48,30 +50,44 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 		Use:   "gini build",
 		Short: "Build the project based on some questions",
 		Run: func(cmd *cobra.Command, args []string) {
+			// Create the go mod
+			projectName, err := createGoMod()
+			if err != nil {
+				log.Fatalln("[ERROR] didn't create the go.mod: ", err)
+				return
+			}
+
+			if err := createDir(projectName); err != nil {
+				log.Fatalln("[ERROR] didn't create the dir: ", err)
+				return
+			}
+
 			if hasDocker() {
 				// Manages part of the docker logic
-				if err := createDocker(); err != nil {
-					log.Fatalln("[ERROR] ", err)
+				if err := createDocker(projectName); err != nil {
+					log.Fatalln("[ERROR] didn't create the docker-compose/Dockerfile: ", err)
 					return
 				}
 
 				// Manages brokers
-				if err := messageBrokerFlow(); err != nil {
-					log.Fatalln("[ERROR] ", err)
+				if err := messageBrokerFlow(projectName); err != nil {
+					log.Fatalln("[ERROR] didn't create the message broker: ", err)
 					return
 				}
 
 				// Manages databases
-				if err := databaseFlow(); err != nil {
-					log.Fatalln("[ERROR] ", err)
+				if err := databaseFlow(projectName); err != nil {
+					log.Fatalln("[ERROR] didn't create the database: ", err)
 					return
 				}
 			}
-			// Create the go mod
-			if err := createGoMod(); err != nil {
-				log.Fatalln("[ERROR] ", err)
-				return
-			}
 		},
 	}
+}
+
+func createDir(name string) error {
+	if err := os.Mkdir(name, OwnerPropertyMode); err != nil {
+		return err
+	}
+	return os.Rename("go.mod", filepath.Join(name, "go.mod"))
 }
