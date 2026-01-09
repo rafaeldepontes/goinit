@@ -60,8 +60,10 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 	return &cobra.Command{
 		Use:   "gini build",
 		Short: "Build the project based on some questions",
+		Long: `Build the project and put it into a new directory, if finished earlier it will delete
+		every single change so far. Otherwise, it will create the docker-compose and Dockerfile if
+		wanted and the "go.mod" file`,
 		Run: func(cmd *cobra.Command, args []string) {
-			// Create the go mod
 			scanner := bufio.NewScanner(os.Stdin)
 			rc.Log.Info("Project name: ")
 
@@ -82,7 +84,7 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 			}
 
 			if hasDocker(rc.Log) {
-				// Manages part of the docker rc.log.c
+				// Manages part of the docker logic
 				if err := createDocker(projectName); err != nil {
 					rc.Log.Errorln("[ERROR] didn't create the docker-compose/Dockerfile: " + err.Error())
 					return
