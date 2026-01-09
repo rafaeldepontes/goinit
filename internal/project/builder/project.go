@@ -2,6 +2,7 @@ package builder
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -17,8 +18,9 @@ const (
 // so this will be a struct holding some of the rc.log.c and then I will update it
 // as needed.
 type RootCmd struct {
-	cmd *cobra.Command
-	Log *log.Logger
+	projectName string
+	cmd         *cobra.Command
+	Log         *log.Logger
 }
 
 // NewRootCmd inits a new rootcmd.
@@ -44,6 +46,10 @@ func (rc *RootCmd) ExecuteContext(ctx context.Context) error {
 	return rc.cmd.ExecuteContext(ctx)
 }
 
+func (rc *RootCmd) RevertChanges() error {
+	return os.RemoveAll(fmt.Sprintf("./%s", rc.projectName))
+}
+
 // BuildProject initialize the workflow to build the project body.
 //
 // When called it will make some questions to the user and should build the whole project from it, so it's basically a bunch of
@@ -59,6 +65,8 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 				rc.Log.Errorln("[ERROR] didn't create the go.mod: " + err.Error())
 				return
 			}
+
+			rc.projectName = projectName
 
 			if err := createDir(projectName); err != nil {
 				rc.Log.Errorln("[ERROR] didn't create the dir: " + err.Error())
