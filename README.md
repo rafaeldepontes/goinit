@@ -21,7 +21,7 @@ It removes repetitive boilerplate so you can focus on writing actual business lo
 ### Using Go (recommended)
 
 ```bash
-go install github.com/rafaeldepontes/go-init@latest
+go install github.com/rafaeldepontes/goinit@latest
 ```
 
 Make sure `$GOPATH/bin` is in your `$PATH`.
@@ -33,7 +33,7 @@ Make sure `$GOPATH/bin` is in your `$PATH`.
 Initialize a new Go project:
 
 ```bash
-go-init init <my-project>
+ginit build
 ```
 
 This will create a new directory with the predefined structure and configuration.
