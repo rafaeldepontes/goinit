@@ -30,43 +30,69 @@ const (
 func databaseFlow(name string, log *log.Logger) error {
 	scanner := bufio.NewScanner(os.Stdin)
 	if hasDatabase(scanner, log) {
-		log.InfoPrefixln(">>>>", " Select the database: ")
-		for i := 0; i < len(databaseOptions); i++ {
-			log.InfoPrefixf(">>>>", " [%d] %s\n", i+1, databaseOptions[i+1])
+		choice, err := askDatabase(log)
+		if err != nil {
+			return err
 		}
 
-		if scanner.Scan() {
-			switch strings.TrimSpace(scanner.Text()) {
-			case Postgres:
-				if err := createCompose(name, templates.PostgresCompose); err != nil {
-					return err
-				}
-
-			case MySql:
-				if err := createCompose(name, templates.MySQLCompose); err != nil {
-					return err
-				}
-
-			case SqlServer:
-				if err := createCompose(name, templates.SQLServerCompose); err != nil {
-					return err
-				}
-
-			case Mongo:
-				if err := createCompose(name, templates.MongoCompose); err != nil {
-					return err
-				}
-
-			default:
-				log.Warningln("As none was selected, using PostgreSQL as the default...")
-				if err := createCompose(name, templates.PostgresCompose); err != nil {
-					return err
-				}
-
+		switch choice {
+		case Postgres:
+			if err := createCompose(name, templates.PostgresCompose); err != nil {
+				return err
 			}
+
+		case MySql:
+			if err := createCompose(name, templates.MySQLCompose); err != nil {
+				return err
+			}
+
+		case SqlServer:
+			if err := createCompose(name, templates.SQLServerCompose); err != nil {
+				return err
+			}
+
+		case Mongo:
+			if err := createCompose(name, templates.MongoCompose); err != nil {
+				return err
+			}
+
+		default:
+			log.Warningln("As none was selected, using PostgreSQL as the default...")
+			if err := createCompose(name, templates.PostgresCompose); err != nil {
+				return err
+			}
+
 		}
 	}
 	return nil
+}
+
+func askDatabase(log *log.Logger) (string, error) {
+	for i := 1; i <= len(databaseOptions); i++ {
+		log.InfoPrefixf(">>>>", " [%d] %s\n", i, databaseOptions[i])
+	}
+
+	// Move cursor UP so we can put the prompt above the options.
+	// Print len(options) lines, +1 to place the prompt above the first option.
+	log.Infof("\033[%dA", len(databaseOptions)+1)
+
+	// Clear the line and print prompt where the cursor currently is
+	// \033[K clears from cursor to end-of-line.
+	log.InfoPrefix(">>>>", " \033[KSelect the database: ")
+
+	reader := bufio.NewReader(os.Stdin)
+	text, err := reader.ReadString('\n')
+	if err != nil {
+		return "", err
+	}
+	choice := strings.TrimSpace(text)
+
+	// Move cursor DOWN to below the options so subsequent prints don't overwrite them.
+	// Move down len(options) lines to end up after the list.
+	log.Infof("\033[%dB", len(databaseOptions))
+	log.Infoln("")
+
+	return choice, nil
 }
 
 func createCompose(pn string, db []byte) error {
