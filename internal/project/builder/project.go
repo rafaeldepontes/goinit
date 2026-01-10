@@ -50,6 +50,11 @@ func (rc *RootCmd) ExecuteContext(ctx context.Context) error {
 	return rc.cmd.ExecuteContext(ctx)
 }
 
+func (rc *RootCmd) SetContext(ctx context.Context) {
+	rc.cmd.SetContext(ctx)
+}
+
+// RevertChanges delete the project's directory
 func (rc *RootCmd) RevertChanges() error {
 	return os.RemoveAll(fmt.Sprintf("./%s", rc.projectName))
 }

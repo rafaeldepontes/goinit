@@ -1,7 +1,7 @@
 package main
 
 import (
-	"os"
+	"context"
 	"os/signal"
 	"syscall"
 
@@ -9,20 +9,39 @@ import (
 )
 
 func main() {
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+	ctx, stop := signal.NotifyContext(
+		context.Background(),
+		syscall.SIGINT,
+		syscall.SIGTERM,
+	)
+	defer stop()
 
 	rootCmd := builder.NewRootCmd()
-	if err := rootCmd.Execute(); err != nil {
-		rootCmd.Log.Errorln("\n[ERROR] executing command prompt: " + err.Error())
+	rootCmd.SetContext(ctx)
+
+	done := make(chan error, 1)
+
+	go func() {
+		done <- rootCmd.Execute()
+	}()
+
+	select {
+	case err := <-done:
+		if err != nil {
+			rootCmd.Log.Errorln("\n[ERROR] command failed: " + err.Error())
+			revert(rootCmd)
+		}
+		return
+
+	case <-ctx.Done():
+		rootCmd.Log.Warningln("\nCommand interrupted — reverting changes...")
+		revert(rootCmd)
 		return
 	}
+}
 
-	<-sigChan
-	rootCmd.Log.Infoln("\nBuild finished early, excluding the changes...")
-
-	if err := rootCmd.RevertChanges(); err != nil {
-		rootCmd.Log.Errorln("\n[ERROR] couldn't revert all changes: " + err.Error())
-		return
+func revert(cmd *builder.RootCmd) {
+	if err := cmd.RevertChanges(); err != nil {
+		cmd.Log.Errorln("\n[ERROR] couldn't revert changes: " + err.Error())
 	}
 }
