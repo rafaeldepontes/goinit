@@ -8,7 +8,6 @@ It removes repetitive boilerplate so you can focus on writing actual business lo
 
 ## Features
 
-- Opinionated Go project structure
 - Ready-to-use configuration and defaults
 - Fast project scaffolding
 - Minimal setup, zero friction
