@@ -68,7 +68,7 @@ func (rc *RootCmd) RevertChanges() error {
 // of edge cases...
 func (rc *RootCmd) BuildProject() *cobra.Command {
 	return &cobra.Command{
-		Use:   "gini build",
+		Use:   "build",
 		Short: "Build the project based on some questions",
 		Long:  LongDescription,
 		RunE: func(cmd *cobra.Command, args []string) error {
