@@ -79,31 +79,26 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 			rc.projectName = projectName
 
 			if err := os.Mkdir(rc.projectName, OwnerPropertyMode); err != nil {
-				// rc.Log.Errorln("[ERROR] didn't create the dir: " + err.Error())
 				return err
 			}
 
 			if err := createGoMod(rc.projectName, rc.Log); err != nil {
-				// rc.Log.Errorln("[ERROR] didn't create the go.mod: " + err.Error())
 				return err
 			}
 
 			if hasDocker(rc.Log) {
 				// Manages part of the docker logic
 				if err := createDocker(projectName); err != nil {
-					// rc.Log.Errorln("[ERROR] didn't create the docker-compose/Dockerfile: " + err.Error())
 					return err
 				}
 
 				// Manages brokers
 				if err := messageBrokerFlow(rc.projectName, rc.Log); err != nil {
-					// rc.Log.Errorln("[ERROR] didn't create the message broker: " + err.Error())
 					return err
 				}
 
 				// Manages databases
 				if err := databaseFlow(rc.projectName, rc.Log); err != nil {
-					// rc.Log.Errorln("[ERROR] didn't create the database: " + err.Error())
 					return err
 				}
 			}
