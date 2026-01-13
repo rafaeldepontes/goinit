@@ -28,40 +28,44 @@ const (
 
 // DockerFlow handles the logic behind the docker-compose and the dockerfile, it appears only once at the start.
 func databaseFlow(name string, log *log.Logger) error {
-	scanner := bufio.NewScanner(os.Stdin)
-	if hasDatabase(scanner, log) {
-		choice, err := askDatabase(log)
+	if hasDatabase(log) {
+		selecteds, err := askDatabase(log)
 		if err != nil {
 			return err
 		}
 
-		switch choice {
-		case Postgres:
-			if err := createCompose(name, templates.PostgresCompose); err != nil {
-				return err
-			}
+		log.Infoln("Selecteds, " + selecteds)
 
-		case MySql:
-			if err := createCompose(name, templates.MySQLCompose); err != nil {
-				return err
-			}
+		choices := strings.Split(selecteds, ",")
+		for _, choice := range choices {
+			switch strings.TrimSpace(choice) {
+			case Postgres:
+				if err := createCompose(name, templates.PostgresCompose); err != nil {
+					return err
+				}
 
-		case SqlServer:
-			if err := createCompose(name, templates.SQLServerCompose); err != nil {
-				return err
-			}
+			case MySql:
+				if err := createCompose(name, templates.MySQLCompose); err != nil {
+					return err
+				}
 
-		case Mongo:
-			if err := createCompose(name, templates.MongoCompose); err != nil {
-				return err
-			}
+			case SqlServer:
+				if err := createCompose(name, templates.SQLServerCompose); err != nil {
+					return err
+				}
 
-		default:
-			log.Warningln("As none was selected, using PostgreSQL as the default...")
-			if err := createCompose(name, templates.PostgresCompose); err != nil {
-				return err
-			}
+			case Mongo:
+				if err := createCompose(name, templates.MongoCompose); err != nil {
+					return err
+				}
 
+			default:
+				log.Warningln("As none was selected, using PostgreSQL as the default...")
+				if err := createCompose(name, templates.PostgresCompose); err != nil {
+					return err
+				}
+
+			}
 		}
 	}
 	return nil
@@ -85,14 +89,14 @@ func askDatabase(log *log.Logger) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	choice := strings.TrimSpace(text)
+	choices := strings.TrimSpace(text)
 
 	// Move cursor DOWN to below the options so subsequent prints don't overwrite them.
 	// Move down len(options) lines to end up after the list.
 	log.Infof("\033[%dB", len(databaseOptions))
 	log.Infoln("")
 
-	return choice, nil
+	return choices, nil
 }
 
 func createCompose(pn string, db []byte) error {
@@ -111,7 +115,8 @@ func createCompose(pn string, db []byte) error {
 }
 
 // hasDatabase checks to see if the user want or not a database in their docker-compose.
-func hasDatabase(scanner *bufio.Scanner, log *log.Logger) bool {
+func hasDatabase(log *log.Logger) bool {
+	scanner := bufio.NewScanner(os.Stdin)
 	log.InfoPrefix(">>", " Do you want a database on your docker-compose? (y/n) ")
 
 	ans := "n"

@@ -31,9 +31,7 @@ var PostgresCompose = []byte(
 		"      mode: replicated\n" +
 		"      replicas: 1\n" +
 		"    volumes:\n" +
-		"      - postgres:/var/lib/postgresql/data\n\n" +
-		"volumes:\n" +
-		"  postgres:\n",
+		"      - postgres:/var/lib/postgresql/data\n\n",
 )
 
 var MySQLCompose = []byte(
@@ -51,9 +49,7 @@ var MySQLCompose = []byte(
 		"      mode: replicated\n" +
 		"      replicas: 1\n" +
 		"    volumes:\n" +
-		"      - mysql:/var/lib/mysql\n\n" +
-		"volumes:\n" +
-		"  mysql:\n",
+		"      - mysql:/var/lib/mysql\n\n",
 )
 
 var SQLServerCompose = []byte(
@@ -69,9 +65,7 @@ var SQLServerCompose = []byte(
 		"      mode: replicated\n" +
 		"      replicas: 1\n" +
 		"    volumes:\n" +
-		"      - sqlserver:/var/opt/mssql\n\n" +
-		"volumes:\n" +
-		"  sqlserver:\n",
+		"      - sqlserver:/var/opt/mssql\n\n",
 )
 
 var RabbitMQCompose = []byte(
