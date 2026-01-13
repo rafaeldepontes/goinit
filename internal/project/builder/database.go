@@ -17,6 +17,7 @@ var databaseOptions = map[int]string{
 	2: "MySQL",
 	3: "SQL Server",
 	4: "MongoDB",
+	5: "Redis",
 }
 
 const (
@@ -24,6 +25,7 @@ const (
 	MySql     = "2"
 	SqlServer = "3"
 	Mongo     = "4"
+	Redis     = "5"
 )
 
 // DockerFlow handles the logic behind the docker-compose and the dockerfile, it appears only once at the start.
@@ -54,6 +56,11 @@ func databaseFlow(name string, log *log.Logger) error {
 
 			case Mongo:
 				if err := createCompose(name, templates.MongoCompose); err != nil {
+					return err
+				}
+
+			case Redis:
+				if err := createCompose(name, templates.RedisCompose); err != nil {
 					return err
 				}
 

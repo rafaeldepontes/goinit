@@ -135,3 +135,6 @@ var MongoCompose = []byte(
 		"      ME_CONFIG_MONGODB_ADMINPASSWORD: example\n" +
 		"      ME_CONFIG_MONGODB_URL: \"mongodb://root:example@mongo:27017/\"\n\n",
 )
+
+// TODO: create the docker compose template for Redis
+var RedisCompose = []byte("")
