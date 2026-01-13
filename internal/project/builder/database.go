@@ -34,8 +34,6 @@ func databaseFlow(name string, log *log.Logger) error {
 			return err
 		}
 
-		log.Infoln("Selecteds, " + selecteds)
-
 		choices := strings.Split(selecteds, ",")
 		for _, choice := range choices {
 			switch strings.TrimSpace(choice) {
@@ -82,7 +80,7 @@ func askDatabase(log *log.Logger) (string, error) {
 
 	// Clear the line and print prompt where the cursor currently is
 	// \033[K clears from cursor to end-of-line.
-	log.InfoPrefix(">>>>", " \033[KSelect the database: ")
+	log.InfoPrefix(">>>>", " \033[KSelect one or more databases (use commas, e.g. 1,3): ")
 
 	reader := bufio.NewReader(os.Stdin)
 	text, err := reader.ReadString('\n')
