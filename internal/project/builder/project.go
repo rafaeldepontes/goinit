@@ -104,6 +104,13 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 				if err := databaseFlow(rc.projectName, rc.Log); err != nil {
 					return err
 				}
+
+				// TODO: Refactor the code base to use a struct to hold the user settings...
+				// creating volumes will be easir that way... also could implement the depends on
+				// module with this new struct...
+				//
+				// WIP
+				// if err := createVolumes(rc.Log)
 			}
 			return nil
 		},
