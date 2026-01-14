@@ -3,9 +3,9 @@ package builder
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"io"
 	"os"
+	"path"
 	"strings"
 
 	"github.com/rafaeldepontes/goinit/internal/log"
@@ -97,8 +97,11 @@ func askDatabase(log *log.Logger) ([]string, error) {
 }
 
 func createCompose(rc *RootCmd, compose []byte, dbName string) error {
-	name := fmt.Sprintf("./%s/%s", rc.projectName, DockerCompose)
-	f, err := os.OpenFile(name, os.O_RDWR|os.O_APPEND, OwnerPropertyMode)
+	f, err := os.OpenFile(
+		path.Join(rc.projectName, DockerCompose),
+		os.O_RDWR|os.O_APPEND,
+		OwnerPropertyMode,
+	)
 	if err != nil {
 		return err
 	}
@@ -128,8 +131,11 @@ func hasDatabase(log *log.Logger) bool {
 }
 
 func createGenericCompose(rc *RootCmd, compose []byte, serviceName string) error {
-	name := fmt.Sprintf("./%s/%s", rc.projectName, DockerCompose)
-	f, err := os.OpenFile(name, os.O_RDWR|os.O_APPEND, OwnerPropertyMode)
+	f, err := os.OpenFile(
+		path.Join(rc.projectName, DockerCompose),
+		os.O_RDWR|os.O_APPEND,
+		OwnerPropertyMode,
+	)
 	if err != nil {
 		return err
 	}

@@ -1,15 +1,18 @@
 package builder
 
 import (
-	"fmt"
 	"os"
+	"path"
 
 	"github.com/rafaeldepontes/goinit/internal/project/builder/templates"
 )
 
 func createVolumes(rc *RootCmd) error {
-	name := fmt.Sprintf("./%s/%s", rc.projectName, DockerCompose)
-	f, err := os.OpenFile(name, os.O_RDWR|os.O_APPEND, OwnerPropertyMode)
+	f, err := os.OpenFile(
+		path.Join(rc.projectName, DockerCompose),
+		os.O_RDWR|os.O_APPEND,
+		OwnerPropertyMode,
+	)
 	if err != nil {
 		return err
 	}

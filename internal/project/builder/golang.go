@@ -45,8 +45,11 @@ func createGoMod(name string, log *log.Logger) error {
 }
 
 func addGolangCompose(rc *RootCmd) error {
-	name := fmt.Sprintf("./%s/%s", rc.projectName, DockerCompose)
-	f, err := os.OpenFile(name, os.O_RDWR|os.O_APPEND, OwnerPropertyMode)
+	f, err := os.OpenFile(
+		path.Join(rc.projectName, DockerCompose),
+		os.O_RDWR|os.O_APPEND,
+		OwnerPropertyMode,
+	)
 	if err != nil {
 		return err
 	}

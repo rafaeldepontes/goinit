@@ -86,15 +86,23 @@ func createNixFiles(rc *RootCmd, flakeCompat bool) error {
 
 	flakeF := files[0]
 
-	flakeT.Execute(flakeF, templateData)
+	if err := flakeT.Execute(flakeF, templateData); err != nil {
+		return err
+	}
 
 	if flakeCompat {
 		defaultNixF := files[1]
 		shellNixF := files[2]
 
-		compatT.Execute(defaultNixF, templateData)
+		if err := compatT.Execute(defaultNixF, templateData); err != nil {
+			return err
+		}
+
 		templateData["Function"] = "shellNix"
-		compatT.Execute(shellNixF, templateData)
+
+		if err := compatT.Execute(shellNixF, templateData); err != nil {
+			return err
+		}
 	}
 
 	return nil
