@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path"
 
 	"github.com/rafaeldepontes/goinit/internal/log"
 	"github.com/rafaeldepontes/goinit/internal/project/builder/templates"
@@ -33,14 +34,14 @@ func createGoMod(name string, log *log.Logger) error {
 	}
 
 	if err := os.WriteFile(
-		GoModFile,
+		path.Join(name, GoModFile),
 		[]byte(template),
 		OwnerPropertyMode,
 	); err != nil {
 		return err
 	}
 
-	return os.Rename(GoModFile, fmt.Sprintf("%s/%s", name, GoModFile))
+	return nil
 }
 
 func addGolangCompose(rc *RootCmd) error {
