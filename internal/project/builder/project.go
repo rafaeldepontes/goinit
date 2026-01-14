@@ -17,6 +17,11 @@ const (
 	OwnerPropertyMode = 0644
 )
 
+type docker struct {
+	volumes   map[string]bool
+	dependsOn map[string]bool
+}
+
 // This should be an interface maybe... But i'm not willing to make this change
 // so this will be a struct holding some of the rc.log.c and then I will update it
 // as needed.
@@ -24,12 +29,21 @@ type RootCmd struct {
 	projectName string
 	cmd         *cobra.Command
 	Log         *log.Logger
+	docker      *docker
+}
+
+func newDocker() *docker {
+	return &docker{
+		volumes:   make(map[string]bool),
+		dependsOn: make(map[string]bool),
+	}
 }
 
 // NewRootCmd inits a new rootcmd.
 func NewRootCmd() *RootCmd {
 	rc := &RootCmd{
-		Log: log.NewLogger(),
+		Log:    log.NewLogger(),
+		docker: newDocker(),
 	}
 
 	cmd := &cobra.Command{
@@ -81,10 +95,6 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 			}
 			rc.projectName = projectName
 
-			if err := os.Mkdir(rc.projectName, OwnerPropertyMode); err != nil {
-				return err
-			}
-
 			if err := createGoMod(rc.projectName, rc.Log); err != nil {
 				return err
 			}
@@ -96,12 +106,16 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 				}
 
 				// Manages brokers
-				if err := messageBrokerFlow(rc.projectName, rc.Log); err != nil {
+				if err := messageBrokerFlow(rc); err != nil {
 					return err
 				}
 
 				// Manages databases
-				if err := databaseFlow(rc.projectName, rc.Log); err != nil {
+				if err := databaseFlow(rc); err != nil {
+					return err
+				}
+
+				if err := addGolangCompose(rc); err != nil {
 					return err
 				}
 
@@ -110,7 +124,9 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 				// module with this new struct...
 				//
 				// WIP
-				// if err := createVolumes(rc.Log)
+				if err := createVolumes(rc); err != nil {
+					return err
+				}
 			}
 			return nil
 		},

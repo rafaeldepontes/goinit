@@ -9,64 +9,48 @@ import (
 	"strings"
 
 	"github.com/rafaeldepontes/goinit/internal/log"
+	enums "github.com/rafaeldepontes/goinit/internal/project/builder/enums/database"
 	"github.com/rafaeldepontes/goinit/internal/project/builder/templates"
 )
 
-var databaseOptions = map[int]string{
-	1: "PostgreSQL",
-	2: "MySQL",
-	3: "SQL Server",
-	4: "MongoDB",
-	5: "Redis",
-}
-
-const (
-	Postgres  = "1"
-	MySql     = "2"
-	SqlServer = "3"
-	Mongo     = "4"
-	Redis     = "5"
-)
-
 // DockerFlow handles the logic behind the docker-compose and the dockerfile, it appears only once at the start.
-func databaseFlow(name string, log *log.Logger) error {
-	if hasDatabase(log) {
-		selecteds, err := askDatabase(log)
+func databaseFlow(rc *RootCmd) error {
+	if hasDatabase(rc.Log) {
+		choices, err := askDatabase(rc.Log)
 		if err != nil {
 			return err
 		}
 
-		choices := strings.Split(selecteds, ",")
 		for _, choice := range choices {
 			switch strings.TrimSpace(choice) {
-			case Postgres:
-				if err := createCompose(name, templates.PostgresCompose); err != nil {
+			case enums.Postgres:
+				if err := createCompose(rc, templates.PostgresCompose, enums.Postgres); err != nil {
 					return err
 				}
 
-			case MySql:
-				if err := createCompose(name, templates.MySQLCompose); err != nil {
+			case enums.MySql:
+				if err := createCompose(rc, templates.MySQLCompose, enums.MySql); err != nil {
 					return err
 				}
 
-			case SqlServer:
-				if err := createCompose(name, templates.SQLServerCompose); err != nil {
+			case enums.SqlServer:
+				if err := createCompose(rc, templates.SQLServerCompose, enums.SqlServer); err != nil {
 					return err
 				}
 
-			case Mongo:
-				if err := createCompose(name, templates.MongoCompose); err != nil {
+			case enums.Mongo:
+				if err := createCompose(rc, templates.MongoCompose, enums.Mongo); err != nil {
 					return err
 				}
 
-			case Redis:
-				if err := createCompose(name, templates.RedisCompose); err != nil {
+			case enums.Redis:
+				if err := createGenericCompose(rc, templates.RedisCompose, enums.Redis); err != nil {
 					return err
 				}
 
 			default:
-				log.Warningln("As none was selected, using PostgreSQL as the default...")
-				if err := createCompose(name, templates.PostgresCompose); err != nil {
+				rc.Log.Warningln("Invalid input, using PostgreSQL as the default...")
+				if err := createCompose(rc, templates.PostgresCompose, enums.Postgres); err != nil {
 					return err
 				}
 
@@ -76,7 +60,15 @@ func databaseFlow(name string, log *log.Logger) error {
 	return nil
 }
 
-func askDatabase(log *log.Logger) (string, error) {
+func askDatabase(log *log.Logger) ([]string, error) {
+	var databaseOptions = map[int]string{
+		1: "PostgreSQL",
+		2: "MySQL",
+		3: "SQL Server",
+		4: "MongoDB",
+		5: "Redis",
+	}
+
 	for i := 1; i <= len(databaseOptions); i++ {
 		log.InfoPrefixf(">>>>", " [%d] %s\n", i, databaseOptions[i])
 	}
@@ -92,9 +84,9 @@ func askDatabase(log *log.Logger) (string, error) {
 	reader := bufio.NewReader(os.Stdin)
 	text, err := reader.ReadString('\n')
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	choices := strings.TrimSpace(text)
+	choices := strings.Split(strings.TrimSpace(text), ",")
 
 	// Move cursor DOWN to below the options so subsequent prints don't overwrite them.
 	// Move down len(options) lines to end up after the list.
@@ -104,18 +96,22 @@ func askDatabase(log *log.Logger) (string, error) {
 	return choices, nil
 }
 
-func createCompose(pn string, db []byte) error {
-	name := fmt.Sprintf("./%s/%s", pn, DockerCompose)
+func createCompose(rc *RootCmd, compose []byte, dbName string) error {
+	name := fmt.Sprintf("./%s/%s", rc.projectName, DockerCompose)
 	f, err := os.OpenFile(name, os.O_RDWR|os.O_APPEND, OwnerPropertyMode)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
-	_, err = f.Write(db)
+	_, err = f.Write(compose)
 	if err != nil && !errors.Is(err, io.EOF) {
 		return err
 	}
+
+	rc.docker.volumes[dbName] = true
+	rc.docker.dependsOn[dbName] = true
+
 	return nil
 }
 
@@ -129,4 +125,22 @@ func hasDatabase(log *log.Logger) bool {
 		ans = strings.ToLower(strings.TrimSpace(scanner.Text()))
 	}
 	return ans == "y"
+}
+
+func createGenericCompose(rc *RootCmd, compose []byte, serviceName string) error {
+	name := fmt.Sprintf("./%s/%s", rc.projectName, DockerCompose)
+	f, err := os.OpenFile(name, os.O_RDWR|os.O_APPEND, OwnerPropertyMode)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = f.Write(compose)
+	if err != nil && !errors.Is(err, io.EOF) {
+		return err
+	}
+
+	rc.docker.dependsOn[serviceName] = true
+
+	return nil
 }

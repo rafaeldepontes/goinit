@@ -1,14 +1,16 @@
 package templates
 
-var DockerComposeTemplate = []byte(
-	"services:\n" +
-		"  golang-project:\n" +
+var GolangProjectComposeFirstHalf = []byte(
+	"  golang-project:\n" +
 		"    container_name: \"my-project\"\n" +
 		"    build:\n" +
 		"      context: ./\n" +
 		"      dockerfile: Dockerfile\n" +
-		"    image: golang-project\n" +
-		"    deploy:\n" +
+		"    image: golang-project\n",
+)
+
+var GolangProjectComposeSecondHalf = []byte(
+	"    deploy:\n" +
 		"      mode: replicated\n" +
 		"      replicas: 1\n" +
 		"    env_file:\n" +
@@ -124,7 +126,9 @@ var MongoCompose = []byte(
 		"      replicas: 1\n" +
 		"    environment:\n" +
 		"      MONGO_INITDB_ROOT_USERNAME: root\n" +
-		"      MONGO_INITDB_ROOT_PASSWORD: example\n\n" +
+		"      MONGO_INITDB_ROOT_PASSWORD: example\n" +
+		"    volumes:\n" +
+		"      - mongo:/data/db\n\n" +
 		"  mongo-express:\n" +
 		"    image: mongo-express\n" +
 		"    restart: always\n" +

@@ -40,7 +40,7 @@ func createDocker(name string) error {
 
 	if err := os.WriteFile(
 		DockerCompose,
-		templates.DockerComposeTemplate,
+		[]byte("services:\n"),
 		OwnerPropertyMode,
 	); err != nil {
 		return err
