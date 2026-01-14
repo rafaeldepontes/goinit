@@ -14,7 +14,8 @@ import (
 var LongDescription string = `Build the project and put it into a new directory, if finished earlier it will delete every single change so far. Otherwise, it will create the docker-compose and Dockerfile if wanted and the "go.mod" file`
 
 const (
-	OwnerPropertyMode = 0644
+	OwnerPropertyMode    = 0644
+	DefaultDirectoryMode = 0755
 )
 
 type docker struct {
@@ -73,7 +74,10 @@ func (rc *RootCmd) SetContext(ctx context.Context) {
 
 // RevertChanges delete the project's directory
 func (rc *RootCmd) RevertChanges() error {
-	return os.RemoveAll(fmt.Sprintf("./%s", rc.projectName))
+	if rc.projectName != "" {
+		return os.RemoveAll(fmt.Sprintf("./%s", rc.projectName))
+	}
+	return nil
 }
 
 // BuildProject initialize the workflow to build the project body.
@@ -128,6 +132,18 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 					return err
 				}
 			}
+
+			if hasNix(rc.Log) {
+				wantsNixCompatFiles := hasNixCompatFiles(rc.Log)
+
+				if err := createNixFiles(rc, wantsNixCompatFiles); err != nil {
+					return err
+				}
+				if err := createDerivationGitignore(rc); err != nil {
+					return err
+				}
+			}
+
 			return nil
 		},
 	}
