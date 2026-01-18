@@ -2,11 +2,11 @@ package builder
 
 import (
 	"bufio"
-	"fmt"
+	_ "embed"
 	"os"
 	"path"
+	"text/template"
 
-	"github.com/rafaeldepontes/goinit/internal/log"
 	"github.com/rafaeldepontes/goinit/internal/project/builder/templates"
 )
 
@@ -15,29 +15,39 @@ const (
 	GoModFile = "go.mod"
 )
 
-func createGoMod(name string, log *log.Logger) error {
-	if err := os.Mkdir(name, DefaultDirectoryMode); err != nil {
+//go:embed templates/go.mod.tmpl
+var goModTemplate string
+
+func createGoMod(rc *RootCmd) error {
+	name := path.Join(rc.projectName, GoModFile)
+	if err := os.Mkdir(rc.projectName, DefaultDirectoryMode); err != nil {
 		return err
 	}
 
-	template := templates.GodModDefault
 	scanner := bufio.NewScanner(os.Stdin)
 
 	var gitUsername string
-	log.Info("Git username: ")
+	rc.Log.Info("Git username: ")
 	if scanner.Scan() {
 		gitUsername = scanner.Text()
 	}
 
-	if gitUsername != "" {
-		template = fmt.Sprintf(templates.GoMod, gitUsername, name)
+	f, err := os.Create(name)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	goModT, err := template.New(name).Parse(goModTemplate)
+	if err != nil {
+		return err
 	}
 
-	if err := os.WriteFile(
-		path.Join(name, GoModFile),
-		[]byte(template),
-		OwnerPropertyMode,
-	); err != nil {
+	templateData := make(map[string]string)
+	templateData["ProjectName"] = rc.projectName
+	templateData["Username"] = gitUsername
+
+	if err := goModT.Execute(f, templateData); err != nil {
 		return err
 	}
 

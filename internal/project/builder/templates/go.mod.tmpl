@@ -1,0 +1,7 @@
+{{- if and .Username .ProjectName }}
+module github.com/{{.Username}}/{{.ProjectName}}
+{{- else}}
+module github.com/username/example
+{{- end}}
+
+go 1.25.5

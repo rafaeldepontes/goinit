@@ -99,7 +99,7 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 			}
 			rc.projectName = projectName
 
-			if err := createGoMod(rc.projectName, rc.Log); err != nil {
+			if err := createGoMod(rc); err != nil {
 				return err
 			}
 
