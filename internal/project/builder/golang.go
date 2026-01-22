@@ -20,8 +20,11 @@ var goModTemplate string
 
 func createGoMod(rc *RootCmd) error {
 	name := path.Join(rc.projectName, GoModFile)
-	if err := os.Mkdir(rc.projectName, DefaultDirectoryMode); err != nil {
-		return err
+
+	if path.Base(rc.projectName) == rc.projectName {
+		if err := os.Mkdir(rc.projectName, DefaultDirectoryMode); err != nil {
+			return err
+		}
 	}
 
 	scanner := bufio.NewScanner(os.Stdin)
