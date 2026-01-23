@@ -6,6 +6,6 @@ var DockerFile = []byte(
 		"COPY go.mod go.sum ./\n" +
 		"RUN go mod download\n\n" +
 		"COPY . .\n" +
-		"RUN go build -v -o /usr/local/bin/app ./...\n\n" +
+		"RUN go build -v -o /usr/local/bin/app .\n\n" +
 		"CMD [\"app\"]\n",
 )
