@@ -6,14 +6,14 @@ import (
 )
 
 var DependsOnTemplate = []byte(
-	"    depends-on:\n",
+	"    depends_on:\n",
 )
 
 var DependsOn map[string][]byte = map[string][]byte{
-	databaseEnum.Postgres:  []byte("      - postgres:\n"),
-	databaseEnum.MySql:     []byte("      - mysql:\n"),
-	databaseEnum.SqlServer: []byte("      - sqlserver:\n"),
-	databaseEnum.Mongo:     []byte("      - mongo:\n"),
-	brokerEnum.RabbitMQ:    []byte("      - rabbitmq:\n"),
-	brokerEnum.Kafka:       []byte("      - kafka:\n"),
+	databaseEnum.Postgres:  []byte("      - postgres\n"),
+	databaseEnum.MySql:     []byte("      - mysql\n"),
+	databaseEnum.SqlServer: []byte("      - sqlserver\n"),
+	databaseEnum.Mongo:     []byte("      - mongo\n"),
+	brokerEnum.RabbitMQ:    []byte("      - rabbitmq\n"),
+	brokerEnum.Kafka:       []byte("      - kafka\n"),
 }
