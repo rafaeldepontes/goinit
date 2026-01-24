@@ -144,6 +144,9 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 				}
 			}
 
+			if err := createReadMe(rc); err != nil {
+				return err
+			}
 			return nil
 		},
 	}
