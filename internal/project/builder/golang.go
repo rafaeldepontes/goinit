@@ -89,6 +89,8 @@ func addGolangCompose(rc *RootCmd) error {
 		}
 	}
 
+	// TODO: Create the same logic as above for the Network...
+
 	_, err = f.Write(templates.GolangProjectComposeSecondHalf)
 	if err != nil {
 		return err

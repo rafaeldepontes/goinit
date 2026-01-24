@@ -21,7 +21,7 @@ func main() {
 	rootCmd.SetContext(ctx)
 
 	if err := rootCmd.Execute(); err != nil {
-		rootCmd.Log.Errorln("\n[ERROR] command failed: " + err.Error())
+		rootCmd.Log.Errorln("\n[ERROR] command failed: ", err)
 		revert(rootCmd)
 		os.Exit(1)
 	}
@@ -29,6 +29,6 @@ func main() {
 
 func revert(cmd *builder.RootCmd) {
 	if err := cmd.RevertChanges(); err != nil {
-		cmd.Log.Errorln("\n[ERROR] couldn't revert changes: " + err.Error())
+		cmd.Log.Errorln("\n[ERROR] couldn't revert changes: ", err)
 	}
 }
