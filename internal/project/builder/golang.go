@@ -79,11 +79,7 @@ func addGolangCompose(rc *RootCmd) error {
 	}
 
 	// Depends-on logic
-	for name, have := range rc.docker.dependsOn {
-		if !have {
-			continue
-		}
-
+	for name := range rc.docker.dependsOn {
 		if _, err := f.Write(templates.DependsOn[name]); err != nil {
 			return err
 		}

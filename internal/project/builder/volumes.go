@@ -22,11 +22,7 @@ func createVolumes(rc *RootCmd) error {
 		return err
 	}
 
-	for name, have := range rc.docker.volumes {
-		if !have {
-			continue
-		}
-
+	for name := range rc.docker.volumes {
 		if _, err := f.Write(templates.Volumes[name]); err != nil {
 			return err
 		}

@@ -19,8 +19,8 @@ const (
 )
 
 type docker struct {
-	volumes   map[string]bool
-	dependsOn map[string]bool
+	volumes   map[string]struct{}
+	dependsOn map[string]struct{}
 }
 
 // This should be an interface maybe... But i'm not willing to make this change
@@ -35,8 +35,8 @@ type RootCmd struct {
 
 func newDocker() *docker {
 	return &docker{
-		volumes:   make(map[string]bool),
-		dependsOn: make(map[string]bool),
+		volumes:   make(map[string]struct{}),
+		dependsOn: make(map[string]struct{}),
 	}
 }
 

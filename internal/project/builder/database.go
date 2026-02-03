@@ -112,8 +112,8 @@ func createCompose(rc *RootCmd, compose []byte, dbName string) error {
 		return err
 	}
 
-	rc.docker.volumes[dbName] = true
-	rc.docker.dependsOn[dbName] = true
+	rc.docker.volumes[dbName] = struct{}{}
+	rc.docker.dependsOn[dbName] = struct{}{}
 
 	return nil
 }
@@ -146,7 +146,7 @@ func createGenericCompose(rc *RootCmd, compose []byte, serviceName string) error
 		return err
 	}
 
-	rc.docker.dependsOn[serviceName] = true
+	rc.docker.dependsOn[serviceName] = struct{}{}
 
 	return nil
 }
