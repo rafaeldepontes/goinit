@@ -11,6 +11,9 @@ import (
 var readmeTemplate string
 var ReadMeName = "README.md"
 
+// TODO: could be a good thing to create the git ignore right here, after all...
+// the best case scenario possible would be getting the git ignore from the golang
+// repository!
 func createReadMe(rc *RootCmd) error {
 	name := path.Join(rc.projectName, ReadMeName)
 	f, err := os.Create(name)
