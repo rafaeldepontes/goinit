@@ -139,7 +139,7 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 				}
 			}
 
-			if err := createReadMe(rc); err != nil {
+			if err := createGitEnv(rc); err != nil {
 				return err
 			}
 			return nil
@@ -148,26 +148,26 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 }
 
 func scanLine(ctx context.Context) (string, error) {
-    ch := make(chan string, 1)
-    errCh := make(chan error, 1)
+	ch := make(chan string, 1)
+	errCh := make(chan error, 1)
 
-    go func() {
-        scanner := bufio.NewScanner(os.Stdin)
-        if scanner.Scan() {
-            ch <- scanner.Text()
-            return
-        }
-        if err := scanner.Err(); err != nil {
-            errCh <- err
-        }
-    }()
+	go func() {
+		scanner := bufio.NewScanner(os.Stdin)
+		if scanner.Scan() {
+			ch <- scanner.Text()
+			return
+		}
+		if err := scanner.Err(); err != nil {
+			errCh <- err
+		}
+	}()
 
-    select {
-    case <-ctx.Done():
-        return "", ctx.Err()
-    case err := <-errCh:
-        return "", err
-    case line := <-ch:
-        return line, nil
-    }
+	select {
+	case <-ctx.Done():
+		return "", ctx.Err()
+	case err := <-errCh:
+		return "", err
+	case line := <-ch:
+		return line, nil
+	}
 }

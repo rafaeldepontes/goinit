@@ -110,9 +110,9 @@ func createNixFiles(rc *RootCmd, flakeCompat bool) error {
 
 func createDerivationGitignore(rc *RootCmd) error {
 	filename := path.Join(rc.projectName, ".gitignore")
-	textToAppend := "/out\n"
+	textToAppend := "/out\n\n"
 
-	f, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, OwnerPropertyMode)
 	if err != nil {
 		return err
 	}
