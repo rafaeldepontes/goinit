@@ -1,7 +1,7 @@
 package builder
 
 import (
-	"bufio"
+	"context"
 	_ "embed"
 	"os"
 	"path"
@@ -18,21 +18,20 @@ const (
 //go:embed templates/go.mod.tmpl
 var goModTemplate string
 
-func createGoMod(rc *RootCmd) error {
+func createGoMod(ctx context.Context, rc *RootCmd) error {
 	name := path.Join(rc.projectName, GoModFile)
 
 	if path.Base(rc.projectName) == rc.projectName {
-		if err := os.Mkdir(rc.projectName, DefaultDirectoryMode); err != nil {
-			return err
-		}
+		// If the directory already exists, the system will delete the old dir...
+		// to prevent this, we are ignoring the error... But I still want to find
+		// a way to handle this... For now, this approach works.
+		_ = os.Mkdir(rc.projectName, DefaultDirectoryMode)
 	}
 
-	scanner := bufio.NewScanner(os.Stdin)
-
-	var gitUsername string
 	rc.Log.Info("Git username: ")
-	if scanner.Scan() {
-		gitUsername = scanner.Text()
+	gitUsername, err := scanLine(ctx)
+	if err != nil {
+		return err
 	}
 
 	f, err := os.Create(name)

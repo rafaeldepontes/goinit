@@ -90,16 +90,16 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 		Short: "Build the project based on some questions",
 		Long:  LongDescription,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			scanner := bufio.NewScanner(os.Stdin)
-			rc.Log.Info("Project name: ")
+			ctx := cmd.Context()
 
-			var projectName string
-			if scanner.Scan() {
-				projectName = scanner.Text()
+			rc.Log.Info("Project name: ")
+			projectName, err := scanLine(ctx)
+			if err != nil {
+				return err
 			}
 			rc.projectName = projectName
 
-			if err := createGoMod(rc); err != nil {
+			if err := createGoMod(ctx, rc); err != nil {
 				return err
 			}
 
@@ -145,4 +145,29 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 			return nil
 		},
 	}
+}
+
+func scanLine(ctx context.Context) (string, error) {
+    ch := make(chan string, 1)
+    errCh := make(chan error, 1)
+
+    go func() {
+        scanner := bufio.NewScanner(os.Stdin)
+        if scanner.Scan() {
+            ch <- scanner.Text()
+            return
+        }
+        if err := scanner.Err(); err != nil {
+            errCh <- err
+        }
+    }()
+
+    select {
+    case <-ctx.Done():
+        return "", ctx.Err()
+    case err := <-errCh:
+        return "", err
+    case line := <-ch:
+        return line, nil
+    }
 }
