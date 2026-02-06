@@ -12,15 +12,18 @@ var DockerFile = []byte(
 
 // TODO: Test this.
 // var DockerFile = []byte(
-// 	"FROM golang:1.25 AS build\n\n" +
+// 	"# Optimized build, if you need something smaller...\n" +
+// 		"# Look into golang:1.25-alpine\n" +
+// 		"FROM golang:1.25 AS build\n\n" +
 // 		"WORKDIR /app\n\n" +
 // 		"COPY go.mod go.sum ./\n" +
 // 		"RUN go mod download\n\n" +
 // 		"COPY . .\n" +
 // 		"RUN go build -v -o /app .\n\n" +
+// 		"# SWEET LITTLE BINARY\n" +
 // 		"FROM grc.io/distroless/base-debian10\n\n" +
 // 		"WORKDIR /\n\n" +
 // 		"COPY --from=build /app /app\n\n" +
 // 		"USER nonroot:nonroot\n\n" +
-// 		"CMD [\"/app\"]\n",
+// 		"ENTRYPOINT [\"/app\"]\n",
 // )
