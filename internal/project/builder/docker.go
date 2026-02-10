@@ -3,7 +3,7 @@ package builder
 import (
 	"bufio"
 	"os"
-	"path/filepath"
+	"path"
 	"strings"
 
 	"github.com/rafaeldepontes/goinit/internal/log"
@@ -30,25 +30,21 @@ func hasDocker(log *log.Logger) bool {
 // createDocker creates the DockerFile and the docker-compose for the user, initally they are empty
 // but, as the user answers the questions, they should be populated.
 func createDocker(name string) error {
+	pathNameDF := path.Join(name, DockerFile)
+
 	if err := os.WriteFile(
-		DockerFile,
+		pathNameDF,
 		templates.DockerFile,
 		OwnerPropertyMode,
 	); err != nil {
 		return err
 	}
 
-	if err := os.WriteFile(
-		DockerCompose,
+	pathNameDC := path.Join(name, DockerCompose)
+
+	return os.WriteFile(
+		pathNameDC,
 		[]byte("services:\n"),
 		OwnerPropertyMode,
-	); err != nil {
-		return err
-	}
-
-	if err := os.Rename(DockerFile, filepath.Join(name, DockerFile)); err != nil {
-		return err
-	}
-
-	return os.Rename(DockerCompose, filepath.Join(name, DockerCompose))
+	)
 }
