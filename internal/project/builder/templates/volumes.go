@@ -1,7 +1,7 @@
 package templates
 
 import (
-	enums "github.com/rafaeldepontes/goinit/internal/project/builder/enums/database"
+	enums "github.com/rafaeldepontes/gini/internal/project/builder/enums/database"
 )
 
 var VolumeTemplate = []byte(

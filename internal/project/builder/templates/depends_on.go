@@ -1,8 +1,8 @@
 package templates
 
 import (
-	brokerEnum "github.com/rafaeldepontes/goinit/internal/project/builder/enums/broker"
-	databaseEnum "github.com/rafaeldepontes/goinit/internal/project/builder/enums/database"
+	brokerEnum "github.com/rafaeldepontes/gini/internal/project/builder/enums/broker"
+	databaseEnum "github.com/rafaeldepontes/gini/internal/project/builder/enums/database"
 )
 
 var DependsOnTemplate = []byte(

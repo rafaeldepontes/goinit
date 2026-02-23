@@ -4,7 +4,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/rafaeldepontes/goinit/internal/project/builder/templates"
+	"github.com/rafaeldepontes/gini/internal/project/builder/templates"
 )
 
 func createVolumes(rc *RootCmd) error {
