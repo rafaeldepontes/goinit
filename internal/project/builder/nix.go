@@ -57,7 +57,7 @@ func createNixFiles(rc *RootCmd, flakeCompat bool) error {
 		filesToBeCreated = filesToBeCreated[:1]
 	}
 
-	files := []*os.File{}
+	files := make([]*os.File, len(filesToBeCreated))
 	for _, v := range filesToBeCreated {
 		f, err := os.Create(
 			path.Join(rc.projectName, v),
