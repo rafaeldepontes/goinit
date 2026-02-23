@@ -1,6 +1,6 @@
-# Go Init
+# Gini
 
-Go Init is an open-source CLI tool that accelerates Go project setup by generating a structured project layout with essential tooling and sensible defaults.
+Gini is an open-source CLI tool that accelerates Go project setup by generating a structured project layout with essential tooling and sensible defaults.
 
 It removes repetitive boilerplate so you can focus on writing actual business logic.
 
@@ -32,7 +32,7 @@ gini build
 ## Go Install
 
 ```bash
-go install github.com/rafaeldepontes/goinit/cmd/gini@latest
+go install github.com/rafaeldepontes/gini@latest
 ```
 
 > This installs a go binary that will automatically bind to your $GOPATH, so don't worry much...
@@ -43,14 +43,14 @@ Make sure `$GOPATH/bin` is in your `$PATH`.
 
 ## Requirements
 
-- Go 1.25.5 or newer
+- Go 1.26.0 or newer
 
 ---
 
-## Why Go Init?
+## Why Gini?
 
 Setting up Go projects repeatedly is tedious and setting up the dockerfile and docker-compose is kinda lame...
-Go Init provides a consistent starting point, helping you:
+Gini provides a consistent starting point, helping you:
 
 - Reduce setup time
 - Maintain project structure consistency
