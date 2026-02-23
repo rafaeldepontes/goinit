@@ -43,7 +43,7 @@ Make sure `$GOPATH/bin` is in your `$PATH`.
 
 ## Requirements
 
-- Go 1.25.5 or newer
+- Go 1.26.0 or newer
 
 ---
 
