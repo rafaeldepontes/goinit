@@ -8,7 +8,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/rafaeldepontes/goinit/internal/log"
+	"github.com/rafaeldepontes/gini/internal/log"
 )
 
 //go:embed templates/flake.nix.tmpl

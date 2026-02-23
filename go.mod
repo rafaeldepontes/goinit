@@ -1,4 +1,4 @@
-module github.com/rafaeldepontes/goinit
+module github.com/rafaeldepontes/gini
 
 go 1.26.0
 

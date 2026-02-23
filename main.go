@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/rafaeldepontes/goinit/internal/project/builder"
+	"github.com/rafaeldepontes/gini/internal/project/builder"
 )
 
 func main() {

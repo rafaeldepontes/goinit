@@ -8,9 +8,9 @@ import (
 	"path"
 	"strings"
 
-	"github.com/rafaeldepontes/goinit/internal/log"
-	enums "github.com/rafaeldepontes/goinit/internal/project/builder/enums/database"
-	"github.com/rafaeldepontes/goinit/internal/project/builder/templates"
+	"github.com/rafaeldepontes/gini/internal/log"
+	enums "github.com/rafaeldepontes/gini/internal/project/builder/enums/database"
+	"github.com/rafaeldepontes/gini/internal/project/builder/templates"
 )
 
 // DockerFlow handles the logic behind the docker-compose and the dockerfile, it appears only once at the start.

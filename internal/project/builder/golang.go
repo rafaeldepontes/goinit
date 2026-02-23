@@ -7,7 +7,7 @@ import (
 	"path"
 	"text/template"
 
-	"github.com/rafaeldepontes/goinit/internal/project/builder/templates"
+	"github.com/rafaeldepontes/gini/internal/project/builder/templates"
 )
 
 const (

@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/rafaeldepontes/goinit/internal/log"
-	enums "github.com/rafaeldepontes/goinit/internal/project/builder/enums/broker"
-	dbEnum "github.com/rafaeldepontes/goinit/internal/project/builder/enums/database"
-	"github.com/rafaeldepontes/goinit/internal/project/builder/templates"
+	"github.com/rafaeldepontes/gini/internal/log"
+	enums "github.com/rafaeldepontes/gini/internal/project/builder/enums/broker"
+	dbEnum "github.com/rafaeldepontes/gini/internal/project/builder/enums/database"
+	"github.com/rafaeldepontes/gini/internal/project/builder/templates"
 )
 
 var brokerOptions = map[int]string{
