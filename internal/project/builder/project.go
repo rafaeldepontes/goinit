@@ -119,6 +119,8 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 					return err
 				}
 
+				// TODO: Add the ToolStack here for anyone that wants to use AWS.
+
 				if err := addGolangCompose(rc); err != nil {
 					return err
 				}
