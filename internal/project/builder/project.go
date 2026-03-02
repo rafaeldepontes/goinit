@@ -3,6 +3,7 @@ package builder
 import (
 	"bufio"
 	"context"
+	"errors"
 	"fmt"
 	"os"
 
@@ -52,6 +53,8 @@ func NewRootCmd() *RootCmd {
 		Short: "Initialize Go projects",
 	}
 	cmd.AddCommand(rc.BuildProject())
+	cmd.SilenceErrors = true
+	cmd.SilenceUsage = true
 
 	rc.cmd = cmd
 	return rc
@@ -167,7 +170,7 @@ func scanLine(ctx context.Context) (string, error) {
 
 	select {
 	case <-ctx.Done():
-		return "", ctx.Err()
+		return "", errors.New("Reverting changes...")
 	case err := <-errCh:
 		return "", err
 	case line := <-ch:
