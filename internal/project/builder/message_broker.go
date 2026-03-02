@@ -2,6 +2,7 @@ package builder
 
 import (
 	"bufio"
+	"context"
 	"os"
 	"strconv"
 	"strings"
@@ -17,8 +18,13 @@ var brokerOptions = map[int]string{
 	2: "Kafka",
 }
 
-func messageBrokerFlow(rc *RootCmd) error {
-	if hasMessageBroker(rc.Log) {
+func messageBrokerFlow(ctx context.Context, rc *RootCmd) error {
+	want, err := hasMessageBroker(ctx, rc.Log)
+	if err != nil {
+		return err
+	}
+
+	if want {
 		choices, err := askMessageBroker(rc.Log)
 		if err != nil {
 			return err
@@ -85,13 +91,13 @@ func askMessageBroker(log *log.Logger) ([]string, error) {
 }
 
 // hasDatabase checks to see if the user want or not a database in their docker-compose.
-func hasMessageBroker(log *log.Logger) bool {
-	scanner := bufio.NewScanner(os.Stdin)
+func hasMessageBroker(ctx context.Context, log *log.Logger) (bool, error) {
 	log.InfoPrefix(">>", " Do you want a message broker on your docker-compose? (y/n) ")
-
-	ans := "n"
-	if scanner.Scan() {
-		ans = strings.ToLower(strings.TrimSpace(scanner.Text()))
+	ans, err := scanLine(ctx)
+	if err != nil {
+		return false, err
 	}
-	return ans == "y"
+
+	ans = strings.ToLower(strings.TrimSpace(ans))
+	return ans == "y", nil
 }

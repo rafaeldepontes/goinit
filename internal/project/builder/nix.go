@@ -1,7 +1,7 @@
 package builder
 
 import (
-	"bufio"
+	"context"
 	_ "embed"
 	"os"
 	"path"
@@ -17,23 +17,34 @@ var nixFlakeTemplate string
 //go:embed templates/compat.nix.tmpl
 var NixCompatTemplate string
 
-func askUser(log *log.Logger, question string) bool {
-	scanner := bufio.NewScanner(os.Stdin)
+func askUser(ctx context.Context, log *log.Logger, question string) (bool, error) {
 	log.InfoPrefix(">>", question)
 
-	ans := "n"
-	if scanner.Scan() {
-		ans = strings.ToLower(strings.TrimSpace(scanner.Text()))
+	ans, err := scanLine(ctx)
+	if err != nil {
+		return false, err
 	}
-	return ans == "y"
+
+	ans = strings.ToLower(strings.TrimSpace(ans))
+	return ans == "y", nil
 }
 
-func hasNix(log *log.Logger) bool {
-	return askUser(log, " Are you going to use Nix? (y/n) ")
+func hasNix(ctx context.Context, log *log.Logger) (bool, error) {
+	want, err := askUser(ctx, log, " Are you going to use Nix? (y/n) ")
+	if err != nil {
+		return false, err
+	}
+
+	return want, nil
 }
 
-func hasNixCompatFiles(log *log.Logger) bool {
-	return askUser(log, " Do you want to create compatibility files for versions of nix that don't support flakes? (y/n) ")
+func hasNixCompatFiles(ctx context.Context, log *log.Logger) (bool, error) {
+	want, err := askUser(ctx, log, " Do you want to create compatibility files for versions of nix that don't support flakes? (y/n) ")
+	if err != nil {
+		return false, err
+	}
+
+	return want, nil
 }
 
 func createNixFiles(rc *RootCmd, flakeCompat bool) error {

@@ -107,19 +107,24 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 				return err
 			}
 
-			if hasDocker(rc.Log) {
+			want, err := hasDocker(ctx, rc.Log)
+			if err != nil {
+				return err
+			}
+
+			if want {
 				// Manages part of the docker logic
 				if err := createDocker(projectName); err != nil {
 					return err
 				}
 
 				// Manages brokers
-				if err := messageBrokerFlow(rc); err != nil {
+				if err := messageBrokerFlow(ctx, rc); err != nil {
 					return err
 				}
 
 				// Manages databases
-				if err := databaseFlow(rc); err != nil {
+				if err := databaseFlow(ctx, rc); err != nil {
 					return err
 				}
 
@@ -134,8 +139,16 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 				}
 			}
 
-			if hasNix(rc.Log) {
-				wantsNixCompatFiles := hasNixCompatFiles(rc.Log)
+			want, err = hasNix(ctx, rc.Log)
+			if err != nil {
+				return err
+			}
+
+			if want {
+				wantsNixCompatFiles, err := hasNixCompatFiles(ctx, rc.Log)
+				if err != nil {
+					return err
+				}
 
 				if err := createNixFiles(rc, wantsNixCompatFiles); err != nil {
 					return err

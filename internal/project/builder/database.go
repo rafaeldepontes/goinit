@@ -2,6 +2,7 @@ package builder
 
 import (
 	"bufio"
+	"context"
 	"errors"
 	"io"
 	"os"
@@ -14,8 +15,13 @@ import (
 )
 
 // DockerFlow handles the logic behind the docker-compose and the dockerfile, it appears only once at the start.
-func databaseFlow(rc *RootCmd) error {
-	if hasDatabase(rc.Log) {
+func databaseFlow(ctx context.Context, rc *RootCmd) error {
+	want, err := hasDatabase(ctx, rc.Log)
+	if err != nil {
+		return err
+	}
+
+	if want {
 		choices, err := askDatabase(rc.Log)
 		if err != nil {
 			return err
@@ -119,15 +125,16 @@ func createCompose(rc *RootCmd, compose []byte, dbName string) error {
 }
 
 // hasDatabase checks to see if the user want or not a database in their docker-compose.
-func hasDatabase(log *log.Logger) bool {
-	scanner := bufio.NewScanner(os.Stdin)
+func hasDatabase(ctx context.Context, log *log.Logger) (bool, error) {
 	log.InfoPrefix(">>", " Do you want a database on your docker-compose? (y/n) ")
 
-	ans := "n"
-	if scanner.Scan() {
-		ans = strings.ToLower(strings.TrimSpace(scanner.Text()))
+	ans, err := scanLine(ctx)
+	if err != nil {
+		return false, err
 	}
-	return ans == "y"
+
+	ans = strings.ToLower(strings.TrimSpace(ans))
+	return ans == "y", nil
 }
 
 func createGenericCompose(rc *RootCmd, compose []byte, serviceName string) error {

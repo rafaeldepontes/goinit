@@ -1,7 +1,7 @@
 package builder
 
 import (
-	"bufio"
+	"context"
 	"os"
 	"path"
 	"strings"
@@ -16,15 +16,16 @@ const (
 )
 
 // hasDocker handles the logic behind the docker-compose and the dockerfile, it appears only once at the start.
-func hasDocker(log *log.Logger) bool {
-	scanner := bufio.NewScanner(os.Stdin)
+func hasDocker(ctx context.Context, log *log.Logger) (bool, error) {
 	log.InfoPrefix(">>", " Are you going to use Docker? (y/n) ")
 
-	ans := "n"
-	if scanner.Scan() {
-		ans = strings.ToLower(strings.TrimSpace(scanner.Text()))
+	ans, err := scanLine(ctx)
+	if err != nil {
+		return false, err
 	}
-	return ans == "y"
+
+	ans = strings.ToLower(strings.TrimSpace(ans))
+	return ans == "y", nil
 }
 
 // createDocker creates the DockerFile and the docker-compose for the user, initally they are empty
