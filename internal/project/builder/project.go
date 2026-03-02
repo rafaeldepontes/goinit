@@ -86,9 +86,10 @@ func (rc *RootCmd) RevertChanges() error {
 // project from it, so it's basically a bunch of edge cases...
 func (rc *RootCmd) BuildProject() *cobra.Command {
 	return &cobra.Command{
-		Use:   "build",
-		Short: "Build the project based on some questions",
-		Long:  LongDescription,
+		Use:     "build",
+		Aliases: []string{"b"},
+		Short:   "Build the project based on some questions",
+		Long:    LongDescription,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx := cmd.Context()
 
