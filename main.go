@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"os"
 	"os/signal"
 	"syscall"
@@ -21,7 +22,7 @@ func main() {
 	rootCmd.SetContext(ctx)
 
 	if err := rootCmd.Execute(); err != nil {
-		rootCmd.Log.Errorln("\n[ERROR] command failed: ", err)
+		rootCmd.Log.Errorln("\n[ERROR] command failed:", err)
 		revert(rootCmd)
 		os.Exit(1)
 	}
@@ -29,6 +30,11 @@ func main() {
 
 func revert(cmd *builder.RootCmd) {
 	if err := cmd.RevertChanges(); err != nil {
-		cmd.Log.Errorln("\n[ERROR] couldn't revert changes: ", err)
+		var pathErr *os.PathError
+		if errors.As(err, &pathErr) {
+			cmd.Log.Errorln("[ERROR] cannot delete root directory...")
+			return
+		}
+		cmd.Log.Errorln("[ERROR] couldn't revert changes:", err)
 	}
 }
