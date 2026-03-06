@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"os"
 	"path"
+	"path/filepath"
 	"text/template"
 
 	"github.com/rafaeldepontes/gini/internal/project/builder/templates"
@@ -47,6 +48,11 @@ func createGoMod(ctx context.Context, rc *RootCmd) error {
 
 	templateData := make(map[string]string)
 	templateData["ProjectName"] = rc.projectName
+	if filepath.Base(rc.projectName) == rc.projectName {
+		dir, _ := os.Getwd()
+		templateData["ProjectName"] = filepath.Base(dir)
+	}
+
 	templateData["Username"] = gitUsername
 
 	if err := goModT.Execute(f, templateData); err != nil {

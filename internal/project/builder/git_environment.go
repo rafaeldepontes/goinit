@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"os"
 	"path"
+	"path/filepath"
 	"text/template"
 )
 
@@ -33,6 +34,10 @@ func createGitEnv(rc *RootCmd) error {
 
 	templateData := map[string]string{
 		"Name": rc.projectName,
+	}
+	if filepath.Base(rc.projectName) == rc.projectName {
+		dir, _ := os.Getwd()
+		templateData["Name"] = filepath.Base(dir)
 	}
 
 	if err = readT.Execute(f, templateData); err != nil {
