@@ -1,7 +1,7 @@
-{{- if and .Username .ProjectName }}
+{{- if and .Username .ProjectName -}}
 module github.com/{{.Username}}/{{.ProjectName}}
-{{- else}}
+{{- else -}}
 module github.com/username/example
-{{- end}}
+{{- end }}
 
 go 1.26.0
