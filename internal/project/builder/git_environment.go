@@ -35,7 +35,8 @@ func createGitEnv(rc *RootCmd) error {
 	templateData := map[string]string{
 		"Name": rc.projectName,
 	}
-	if filepath.Base(rc.projectName) == rc.projectName {
+
+	if validatePath(rc.projectName) {
 		dir, _ := os.Getwd()
 		templateData["Name"] = filepath.Base(dir)
 	}
