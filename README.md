@@ -1,4 +1,6 @@
 # Gini
+[![language](https://img.shields.io/badge/language-Go-00ADD8?labelColor=2F2F2F)](https://go.dev/doc/)
+[![version](https://img.shields.io/badge/version-1.26-9C27B0?labelColor=2F2F2F)](https://go.dev/doc/install)
 
 Gini is an open-source CLI tool that accelerates Go project setup by generating a structured project layout with essential tooling and sensible defaults.
 
