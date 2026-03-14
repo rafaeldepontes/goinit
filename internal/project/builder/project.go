@@ -1,9 +1,7 @@
 package builder
 
 import (
-	"bufio"
 	"context"
-	"errors"
 	"fmt"
 	"os"
 
@@ -107,55 +105,12 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 				return err
 			}
 
-			want, err := hasDocker(ctx, rc.Log)
-			if err != nil {
+			if err := dockerFlow(ctx, rc); err != nil {
 				return err
 			}
 
-			if want {
-				// Manages part of the docker logic
-				if err := createDocker(projectName); err != nil {
-					return err
-				}
-
-				// Manages brokers
-				if err := messageBrokerFlow(ctx, rc); err != nil {
-					return err
-				}
-
-				// Manages databases
-				if err := databaseFlow(ctx, rc); err != nil {
-					return err
-				}
-
-				// TODO: Add the ToolStack here for anyone that wants to use AWS.
-
-				if err := addGolangCompose(rc); err != nil {
-					return err
-				}
-
-				if err := createVolumes(rc); err != nil {
-					return err
-				}
-			}
-
-			want, err = hasNix(ctx, rc.Log)
-			if err != nil {
+			if err := nixFlow(ctx, rc); err != nil {
 				return err
-			}
-
-			if want {
-				wantsNixCompatFiles, err := hasNixCompatFiles(ctx, rc.Log)
-				if err != nil {
-					return err
-				}
-
-				if err := createNixFiles(rc, wantsNixCompatFiles); err != nil {
-					return err
-				}
-				if err := createDerivationGitignore(rc); err != nil {
-					return err
-				}
 			}
 
 			if err := createGitEnv(rc); err != nil {
@@ -163,30 +118,5 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 			}
 			return nil
 		},
-	}
-}
-
-func scanLine(ctx context.Context) (string, error) {
-	ch := make(chan string, 1)
-	errCh := make(chan error, 1)
-
-	go func() {
-		scanner := bufio.NewScanner(os.Stdin)
-		if scanner.Scan() {
-			ch <- scanner.Text()
-			return
-		}
-		if err := scanner.Err(); err != nil {
-			errCh <- err
-		}
-	}()
-
-	select {
-	case <-ctx.Done():
-		return "", errors.New("Reverting changes...")
-	case err := <-errCh:
-		return "", err
-	case line := <-ch:
-		return line, nil
 	}
 }

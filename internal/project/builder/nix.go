@@ -17,6 +17,28 @@ var nixFlakeTemplate string
 //go:embed templates/compat.nix.tmpl
 var NixCompatTemplate string
 
+func nixFlow(ctx context.Context, rc *RootCmd) error {
+	want, err := hasNix(ctx, rc.Log)
+	if err != nil {
+		return err
+	}
+
+	if want {
+		wantsNixCompatFiles, err := hasNixCompatFiles(ctx, rc.Log)
+		if err != nil {
+			return err
+		}
+
+		if err := createNixFiles(rc, wantsNixCompatFiles); err != nil {
+			return err
+		}
+		if err := createDerivationGitignore(rc); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func askUser(ctx context.Context, log *log.Logger, question string) (bool, error) {
 	log.InfoPrefix(">>", question)
 
