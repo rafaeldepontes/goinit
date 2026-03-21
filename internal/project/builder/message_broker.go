@@ -92,12 +92,10 @@ func askMessageBroker(log *log.Logger) ([]string, error) {
 
 // hasDatabase checks to see if the user want or not a database in their docker-compose.
 func hasMessageBroker(ctx context.Context, log *log.Logger) (bool, error) {
-	log.InfoPrefix(">>", " Do you want a message broker on your docker-compose? (y/n) ")
-	ans, err := scanLine(ctx)
+	want, err := askUser(ctx, log, " Do you want a message broker on your docker-compose? (y/n) ")
 	if err != nil {
 		return false, err
 	}
 
-	ans = strings.ToLower(strings.TrimSpace(ans))
-	return ans == "y", nil
+	return want, nil
 }

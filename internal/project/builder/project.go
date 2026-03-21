@@ -1,11 +1,10 @@
 package builder
 
 import (
-	"bufio"
 	"context"
-	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 
 	"github.com/rafaeldepontes/gini/internal/log"
 	"github.com/rafaeldepontes/gini/internal/project/builder/templates"
@@ -53,6 +52,7 @@ func NewRootCmd() *RootCmd {
 		Short: "Initialize Go projects",
 	}
 	cmd.AddCommand(rc.BuildProject())
+	cmd.AddCommand(rc.Update())
 	cmd.SilenceErrors = true
 	cmd.SilenceUsage = true
 
@@ -107,55 +107,12 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 				return err
 			}
 
-			want, err := hasDocker(ctx, rc.Log)
-			if err != nil {
+			if err := dockerFlow(ctx, rc); err != nil {
 				return err
 			}
 
-			if want {
-				// Manages part of the docker logic
-				if err := createDocker(projectName); err != nil {
-					return err
-				}
-
-				// Manages brokers
-				if err := messageBrokerFlow(ctx, rc); err != nil {
-					return err
-				}
-
-				// Manages databases
-				if err := databaseFlow(ctx, rc); err != nil {
-					return err
-				}
-
-				// TODO: Add the ToolStack here for anyone that wants to use AWS.
-
-				if err := addGolangCompose(rc); err != nil {
-					return err
-				}
-
-				if err := createVolumes(rc); err != nil {
-					return err
-				}
-			}
-
-			want, err = hasNix(ctx, rc.Log)
-			if err != nil {
+			if err := nixFlow(ctx, rc); err != nil {
 				return err
-			}
-
-			if want {
-				wantsNixCompatFiles, err := hasNixCompatFiles(ctx, rc.Log)
-				if err != nil {
-					return err
-				}
-
-				if err := createNixFiles(rc, wantsNixCompatFiles); err != nil {
-					return err
-				}
-				if err := createDerivationGitignore(rc); err != nil {
-					return err
-				}
 			}
 
 			if err := createGitEnv(rc); err != nil {
@@ -166,27 +123,28 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 	}
 }
 
-func scanLine(ctx context.Context) (string, error) {
-	ch := make(chan string, 1)
-	errCh := make(chan error, 1)
+// Update runs "go install github.com/rafaeldepontes/gini@latest"
+//
+// If any update is available it will be installed.
+func (rc *RootCmd) Update() *cobra.Command {
+	return &cobra.Command{
+		Use:     "update",
+		Aliases: []string{"u"},
+		Short:   "Update Gini for the latest version",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			rc.Log.Infoln("Looking for updates...")
+			ctx := cmd.Context()
 
-	go func() {
-		scanner := bufio.NewScanner(os.Stdin)
-		if scanner.Scan() {
-			ch <- scanner.Text()
-			return
-		}
-		if err := scanner.Err(); err != nil {
-			errCh <- err
-		}
-	}()
+			module := "github.com/rafaeldepontes/gini"
 
-	select {
-	case <-ctx.Done():
-		return "", errors.New("Reverting changes...")
-	case err := <-errCh:
-		return "", err
-	case line := <-ch:
-		return line, nil
+			installCmd := exec.CommandContext(ctx, "go", "install", module+"@latest")
+			out, err := installCmd.CombinedOutput()
+			if err != nil {
+				return fmt.Errorf("go install failed: %w: %s", err, string(out))
+			}
+
+			rc.Log.Infoln("Updated successfully!")
+			return nil
+		},
 	}
 }
