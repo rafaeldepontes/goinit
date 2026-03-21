@@ -14,7 +14,7 @@ import (
 var LongDescription string = `Build the project and put it into a new directory, if finished earlier it will delete every single change so far. Otherwise, it will create the docker-compose and Dockerfile if wanted and the "go.mod" file`
 
 const (
-	Version              = "1.0.14"
+	Version              = "1.0.15"
 	Name                 = "Gini"
 	OwnerPropertyMode    = 0644
 	DefaultDirectoryMode = 0755
@@ -137,7 +137,7 @@ func (rc *RootCmd) Update() *cobra.Command {
 		Aliases: []string{"u"},
 		Short:   "Update Gini for the latest version",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			rc.Log.Infoln("Looking for updates...")
+			fmt.Println("Looking for updates...")
 			ctx := cmd.Context()
 
 			module := "github.com/rafaeldepontes/gini"
@@ -148,7 +148,7 @@ func (rc *RootCmd) Update() *cobra.Command {
 				return fmt.Errorf("go install failed: %w: %s", err, string(out))
 			}
 
-			rc.Log.Infoln("Updated successfully!")
+			fmt.Println("Updated successfully!")
 			return nil
 		},
 	}
