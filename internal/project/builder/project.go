@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/exec"
 
 	"github.com/rafaeldepontes/gini/internal/log"
 	"github.com/rafaeldepontes/gini/internal/project/builder/templates"
@@ -51,6 +52,7 @@ func NewRootCmd() *RootCmd {
 		Short: "Initialize Go projects",
 	}
 	cmd.AddCommand(rc.BuildProject())
+	cmd.AddCommand(rc.Update())
 	cmd.SilenceErrors = true
 	cmd.SilenceUsage = true
 
@@ -116,6 +118,29 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 			if err := createGitEnv(rc); err != nil {
 				return err
 			}
+			return nil
+		},
+	}
+}
+
+func (rc *RootCmd) Update() *cobra.Command {
+	return &cobra.Command{
+		Use:     "update",
+		Aliases: []string{"u"},
+		Short:   "Update Gini for the latest version",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			rc.Log.Infoln("Looking for updates...")
+			ctx := cmd.Context()
+
+			module := "github.com/rafaeldepontes/gini"
+
+			installCmd := exec.CommandContext(ctx, "go", "install", module+"@latest")
+			out, err := installCmd.CombinedOutput()
+			if err != nil {
+				return fmt.Errorf("go install failed: %w: %s", err, string(out))
+			}
+
+			rc.Log.Infoln("Updated successfully!")
 			return nil
 		},
 	}
