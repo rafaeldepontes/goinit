@@ -14,6 +14,8 @@ import (
 var LongDescription string = `Build the project and put it into a new directory, if finished earlier it will delete every single change so far. Otherwise, it will create the docker-compose and Dockerfile if wanted and the "go.mod" file`
 
 const (
+	Version              = "1.0.10"
+	Name                 = "Gini"
 	OwnerPropertyMode    = 0644
 	DefaultDirectoryMode = 0755
 )
@@ -48,13 +50,17 @@ func NewRootCmd() *RootCmd {
 	}
 
 	cmd := &cobra.Command{
-		Use:   "gini",
-		Short: "Initialize Go projects",
+		Use:           "gini",
+		Version:       Version,
+		Short:         "Initialize Go projects",
+		SilenceErrors: true,
+		SilenceUsage:  true,
 	}
 	cmd.AddCommand(rc.BuildProject())
 	cmd.AddCommand(rc.Update())
-	cmd.SilenceErrors = true
-	cmd.SilenceUsage = true
+	cmd.AddCommand(rc.Version())
+	cmd.SetVersionTemplate(rc.Log.SInfof("Gini v%s\n", Version))
+	rc.Log.Info()
 
 	rc.cmd = cmd
 	return rc

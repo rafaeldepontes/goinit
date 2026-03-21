@@ -101,3 +101,8 @@ func (l *Logger) PrintBanner(msg ...any) {
 	fmt.Println(msg...)
 	fmt.Print(NoneColor)
 }
+
+func (l *Logger) SInfof(msg string, args ...any) string {
+	fmt.Print(NoneColor)
+	return fmt.Sprintf(InfoColor+msg, args...)
+}
