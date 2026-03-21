@@ -14,7 +14,7 @@ import (
 var LongDescription string = `Build the project and put it into a new directory, if finished earlier it will delete every single change so far. Otherwise, it will create the docker-compose and Dockerfile if wanted and the "go.mod" file`
 
 const (
-	Version              = "1.0.13"
+	Version              = "1.0.14"
 	Name                 = "Gini"
 	OwnerPropertyMode    = 0644
 	DefaultDirectoryMode = 0755
@@ -59,7 +59,6 @@ func NewRootCmd() *RootCmd {
 	cmd.AddCommand(rc.BuildProject())
 	cmd.AddCommand(rc.Update())
 	cmd.AddCommand(rc.Version())
-	cmd.SetVersionTemplate(rc.Log.SInfof("Gini v%s\n", Version))
 	rc.Log.Info()
 
 	rc.cmd = cmd
@@ -68,7 +67,6 @@ func NewRootCmd() *RootCmd {
 
 // Execute uses the args (os.Args[1:] by default) and run through the command tree finding appropriate matches for commands and then corresponding flags. (I got this description from cobra function...)
 func (rc *RootCmd) Execute() error {
-	rc.Log.PrintBanner(templates.ProjectBanner)
 	return rc.cmd.Execute()
 }
 
@@ -100,6 +98,7 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 		Short:   "Build the project based on some questions",
 		Long:    LongDescription,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			rc.Log.PrintBanner(templates.ProjectBanner)
 			ctx := cmd.Context()
 
 			rc.Log.Info("Project name: ")
