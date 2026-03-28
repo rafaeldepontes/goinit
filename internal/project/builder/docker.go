@@ -14,7 +14,7 @@ const (
 	DockerFile    = "Dockerfile"
 )
 
-func dockerFlow(ctx context.Context, rc *RootCmd) error {
+func dockerFlow(ctx context.Context, rc RootCmd) error {
 	want, err := hasDocker(ctx, rc.Log)
 	if err != nil {
 		return err
@@ -51,7 +51,7 @@ func dockerFlow(ctx context.Context, rc *RootCmd) error {
 }
 
 // hasDocker handles the logic behind the docker-compose and the dockerfile, it appears only once at the start.
-func hasDocker(ctx context.Context, log *log.Logger) (bool, error) {
+func hasDocker(ctx context.Context, log log.Logger) (bool, error) {
 	want, err := askUser(ctx, log, " Are you going to use Docker? (y/n) ")
 	if err != nil {
 		return false, err

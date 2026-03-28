@@ -17,7 +17,7 @@ var nixFlakeTemplate string
 //go:embed templates/compat.nix.tmpl
 var NixCompatTemplate string
 
-func nixFlow(ctx context.Context, rc *RootCmd) error {
+func nixFlow(ctx context.Context, rc RootCmd) error {
 	want, err := hasNix(ctx, rc.Log)
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func nixFlow(ctx context.Context, rc *RootCmd) error {
 	return nil
 }
 
-func askUser(ctx context.Context, log *log.Logger, question string) (bool, error) {
+func askUser(ctx context.Context, log log.Logger, question string) (bool, error) {
 	log.InfoPrefix(">>", question)
 
 	ans, err := scanLine(ctx)
@@ -51,7 +51,7 @@ func askUser(ctx context.Context, log *log.Logger, question string) (bool, error
 	return ans == "y", nil
 }
 
-func hasNix(ctx context.Context, log *log.Logger) (bool, error) {
+func hasNix(ctx context.Context, log log.Logger) (bool, error) {
 	want, err := askUser(ctx, log, " Are you going to use Nix? (y/n) ")
 	if err != nil {
 		return false, err
@@ -60,7 +60,7 @@ func hasNix(ctx context.Context, log *log.Logger) (bool, error) {
 	return want, nil
 }
 
-func hasNixCompatFiles(ctx context.Context, log *log.Logger) (bool, error) {
+func hasNixCompatFiles(ctx context.Context, log log.Logger) (bool, error) {
 	want, err := askUser(ctx, log, " Do you want to create compatibility files for versions of nix that don't support flakes? (y/n) ")
 	if err != nil {
 		return false, err
@@ -69,7 +69,7 @@ func hasNixCompatFiles(ctx context.Context, log *log.Logger) (bool, error) {
 	return want, nil
 }
 
-func createNixFiles(rc *RootCmd, flakeCompat bool) error {
+func createNixFiles(rc RootCmd, flakeCompat bool) error {
 	flakeT, err := template.New("flake.nix").Parse(nixFlakeTemplate)
 	if err != nil {
 		return err
@@ -141,7 +141,7 @@ func createNixFiles(rc *RootCmd, flakeCompat bool) error {
 	return nil
 }
 
-func createDerivationGitignore(rc *RootCmd) error {
+func createDerivationGitignore(rc RootCmd) error {
 	filename := path.Join(rc.projectName, ".gitignore")
 	textToAppend := "/out\n\n"
 
@@ -149,7 +149,6 @@ func createDerivationGitignore(rc *RootCmd) error {
 	if err != nil {
 		return err
 	}
-
 	defer f.Close()
 
 	if _, err := f.WriteString(textToAppend); err != nil {

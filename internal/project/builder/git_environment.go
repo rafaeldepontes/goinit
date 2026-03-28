@@ -19,7 +19,7 @@ const (
 	GitIgnoreName = ".gitignore"
 )
 
-func createGitEnv(rc *RootCmd) error {
+func createGitEnv(rc RootCmd) error {
 	readmePath := path.Join(rc.projectName, ReadMeName)
 	f, err := os.Create(readmePath)
 	if err != nil {

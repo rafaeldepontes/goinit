@@ -19,7 +19,7 @@ const (
 //go:embed templates/go.mod.tmpl
 var goModTemplate string
 
-func createGoMod(ctx context.Context, rc *RootCmd) error {
+func createGoMod(ctx context.Context, rc RootCmd) error {
 	name := path.Join(rc.projectName, GoModFile)
 
 	if !validatePath(rc.projectName) {
@@ -62,7 +62,7 @@ func createGoMod(ctx context.Context, rc *RootCmd) error {
 	return nil
 }
 
-func addGolangCompose(rc *RootCmd) error {
+func addGolangCompose(rc RootCmd) error {
 	f, err := os.OpenFile(
 		path.Join(rc.projectName, DockerCompose),
 		os.O_RDWR|os.O_APPEND,

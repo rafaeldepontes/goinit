@@ -7,7 +7,7 @@ import (
 )
 
 // Version represents the version command
-func (rc *RootCmd) Version() *cobra.Command {
+func (rc RootCmd) Version() *cobra.Command {
 	return &cobra.Command{
 		Use:     "version",
 		Aliases: []string{"v"},

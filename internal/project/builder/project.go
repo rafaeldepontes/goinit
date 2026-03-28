@@ -31,7 +31,7 @@ type docker struct {
 type RootCmd struct {
 	projectName string
 	cmd         *cobra.Command
-	Log         *log.Logger
+	Log         log.Logger
 	docker      *docker
 }
 
@@ -66,21 +66,21 @@ func NewRootCmd() *RootCmd {
 }
 
 // Execute uses the args (os.Args[1:] by default) and run through the command tree finding appropriate matches for commands and then corresponding flags. (I got this description from cobra function...)
-func (rc *RootCmd) Execute() error {
+func (rc RootCmd) Execute() error {
 	return rc.cmd.Execute()
 }
 
 // ExecuteContext is the same as Execute(), but sets the ctx on the command. Retrieve ctx by calling cmd.Context() inside your *Run lifecycle or ValidArgs functions. (I got this description from cobra function...)
-func (rc *RootCmd) ExecuteContext(ctx context.Context) error {
+func (rc RootCmd) ExecuteContext(ctx context.Context) error {
 	return rc.cmd.ExecuteContext(ctx)
 }
 
-func (rc *RootCmd) SetContext(ctx context.Context) {
+func (rc RootCmd) SetContext(ctx context.Context) {
 	rc.cmd.SetContext(ctx)
 }
 
 // RevertChanges delete the project's directory
-func (rc *RootCmd) RevertChanges() error {
+func (rc RootCmd) RevertChanges() error {
 	if rc.projectName != "" {
 		return os.RemoveAll(fmt.Sprintf("./%s", rc.projectName))
 	}
@@ -91,7 +91,7 @@ func (rc *RootCmd) RevertChanges() error {
 //
 // When called it will make some questions to the user and should build the whole
 // project from it, so it's basically a bunch of edge cases...
-func (rc *RootCmd) BuildProject() *cobra.Command {
+func (rc RootCmd) BuildProject() *cobra.Command {
 	return &cobra.Command{
 		Use:     "build",
 		Aliases: []string{"b"},
@@ -131,7 +131,7 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 // Update runs "go install github.com/rafaeldepontes/gini@latest"
 //
 // If any update is available it will be installed.
-func (rc *RootCmd) Update() *cobra.Command {
+func (rc RootCmd) Update() *cobra.Command {
 	return &cobra.Command{
 		Use:     "update",
 		Aliases: []string{"u"},
