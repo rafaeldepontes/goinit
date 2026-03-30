@@ -14,7 +14,7 @@ import (
 var LongDescription string = `Build the project and put it into a new directory, if finished earlier it will delete every single change so far. Otherwise, it will create the docker-compose and Dockerfile if wanted and the "go.mod" file`
 
 const (
-	Version              = "1.0.16"
+	Version              = "1.0.17"
 	Name                 = "Gini"
 	DefaultFileMode      = 0644
 	DefaultDirectoryMode = 0755
@@ -91,7 +91,7 @@ func (rc RootCmd) RevertChanges() error {
 //
 // When called it will make some questions to the user and should build the whole
 // project from it, so it's basically a bunch of edge cases...
-func (rc RootCmd) BuildProject() *cobra.Command {
+func (rc *RootCmd) BuildProject() *cobra.Command {
 	return &cobra.Command{
 		Use:     "build",
 		Aliases: []string{"b"},
@@ -108,19 +108,19 @@ func (rc RootCmd) BuildProject() *cobra.Command {
 			}
 			rc.projectName = projectName
 
-			if err := createGoMod(ctx, rc); err != nil {
+			if err := createGoMod(ctx, *rc); err != nil {
 				return err
 			}
 
-			if err := dockerFlow(ctx, rc); err != nil {
+			if err := dockerFlow(ctx, *rc); err != nil {
 				return err
 			}
 
-			if err := nixFlow(ctx, rc); err != nil {
+			if err := nixFlow(ctx, *rc); err != nil {
 				return err
 			}
 
-			if err := createGitEnv(ctx, rc); err != nil {
+			if err := createGitEnv(ctx, *rc); err != nil {
 				return err
 			}
 			return nil

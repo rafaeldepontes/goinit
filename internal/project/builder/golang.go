@@ -13,7 +13,8 @@ import (
 
 const (
 	// Files
-	GoModFile = "go.mod"
+	GoModFile  = "go.mod"
+	MainGoFile = "main.go"
 )
 
 //go:embed templates/go.mod.tmpl
@@ -57,6 +58,17 @@ func createGoMod(ctx context.Context, rc RootCmd) error {
 	templateData["Username"] = gitUsername
 
 	if err := goModT.Execute(f, templateData); err != nil {
+		return err
+	}
+
+	main_go, err := os.Create(path.Join(rc.projectName, MainGoFile))
+	if err != nil {
+		return err
+	}
+	defer main_go.Close()
+
+	_, err = main_go.Write([]byte("package main\n\nfunc main() {\n\n}\n"))
+	if err != nil {
 		return err
 	}
 

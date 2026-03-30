@@ -45,6 +45,8 @@ func createGitEnv(ctx context.Context, rc RootCmd) error {
 		templateData["Name"] = filepath.Base(dir)
 	}
 
+	templateData["Name"] = toPascalCase(templateData["Name"])
+
 	if err = readT.Execute(f, templateData); err != nil {
 		return err
 	}
