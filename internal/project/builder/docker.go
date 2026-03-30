@@ -14,6 +14,7 @@ const (
 	DockerFile    = "Dockerfile"
 )
 
+// dockerFlow calls all the docker related functions if the users agrees.
 func dockerFlow(ctx context.Context, rc RootCmd) error {
 	want, err := hasDocker(ctx, rc.Log)
 	if err != nil {

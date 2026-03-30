@@ -18,6 +18,7 @@ var brokerOptions = map[int]string{
 	2: "Kafka",
 }
 
+// messageBrokerFlow is almost identical to the database flow, go check it.
 func messageBrokerFlow(ctx context.Context, rc RootCmd) error {
 	want, err := hasMessageBroker(ctx, rc.Log)
 	if err != nil {

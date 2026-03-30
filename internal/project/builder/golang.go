@@ -19,6 +19,7 @@ const (
 //go:embed templates/go.mod.tmpl
 var goModTemplate string
 
+// createGoMod literally just creates the 'go.mod'
 func createGoMod(ctx context.Context, rc RootCmd) error {
 	name := path.Join(rc.projectName, GoModFile)
 
@@ -62,6 +63,8 @@ func createGoMod(ctx context.Context, rc RootCmd) error {
 	return nil
 }
 
+// addGolangCompose writes into the docker compose the Golang service if the user
+// has one
 func addGolangCompose(rc RootCmd) error {
 	f, err := os.OpenFile(
 		path.Join(rc.projectName, DockerCompose),

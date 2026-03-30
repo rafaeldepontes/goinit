@@ -7,6 +7,8 @@ import (
 	"os"
 )
 
+// scanLine uses channels and a context to verify if the user chose to
+// cancel the build, it also uses a Scanner from bufio to work.
 func scanLine(ctx context.Context) (string, error) {
 	ch := make(chan string, 1)
 	errCh := make(chan error, 1)

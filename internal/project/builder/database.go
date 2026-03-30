@@ -14,7 +14,7 @@ import (
 	"github.com/rafaeldepontes/gini/internal/project/builder/templates"
 )
 
-// DockerFlow handles the logic behind the docker-compose and the dockerfile, it appears only once at the start.
+// databaseFlow handles the logic behind the docker-compose and the dockerfile, it appears only once at the start.
 func databaseFlow(ctx context.Context, rc RootCmd) error {
 	want, err := hasDatabase(ctx, rc.Log)
 	if err != nil {
