@@ -29,6 +29,7 @@ func main() {
 }
 
 func revert(cmd *builder.RootCmd) {
+	cmd.Log.Infoln("reverting changes.")
 	if err := cmd.RevertChanges(); err != nil {
 		var pathErr *os.PathError
 		if errors.As(err, &pathErr) {
