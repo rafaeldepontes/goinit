@@ -14,29 +14,29 @@ const (
 type Logger struct {
 }
 
-func NewLogger() *Logger {
-	return &Logger{}
+func NewLogger() Logger {
+	return Logger{}
 }
 
-func (l *Logger) Info(msg ...any) {
+func (l Logger) Info(msg ...any) {
 	fmt.Print(InfoColor)
 	fmt.Print(msg...)
 	fmt.Print(NoneColor)
 }
 
-func (l *Logger) Infoln(msg ...any) {
+func (l Logger) Infoln(msg ...any) {
 	fmt.Print(InfoColor)
 	fmt.Println(msg...)
 	fmt.Print(NoneColor)
 }
 
-func (l *Logger) Infof(msg string, args ...any) {
+func (l Logger) Infof(msg string, args ...any) {
 	fmt.Print(InfoColor)
 	fmt.Printf(msg, args...)
 	fmt.Print(NoneColor)
 }
 
-func (l *Logger) InfoPrefix(pref string, msg ...any) {
+func (l Logger) InfoPrefix(pref string, msg ...any) {
 	fmt.Print(ArrowColor)
 	fmt.Print(pref)
 	fmt.Print(InfoColor)
@@ -44,7 +44,7 @@ func (l *Logger) InfoPrefix(pref string, msg ...any) {
 	fmt.Print(NoneColor)
 }
 
-func (l *Logger) InfoPrefixln(pref string, msg ...any) {
+func (l Logger) InfoPrefixln(pref string, msg ...any) {
 	fmt.Print(ArrowColor)
 	fmt.Print(pref)
 	fmt.Print(InfoColor)
@@ -52,7 +52,7 @@ func (l *Logger) InfoPrefixln(pref string, msg ...any) {
 	fmt.Print(NoneColor)
 }
 
-func (l *Logger) InfoPrefixf(pref string, msg string, args ...any) {
+func (l Logger) InfoPrefixf(pref string, msg string, args ...any) {
 	fmt.Print(ArrowColor)
 	fmt.Print(pref)
 	fmt.Print(InfoColor)
@@ -60,49 +60,49 @@ func (l *Logger) InfoPrefixf(pref string, msg string, args ...any) {
 	fmt.Print(NoneColor)
 }
 
-func (l *Logger) Warning(msg ...any) {
+func (l Logger) Warning(msg ...any) {
 	fmt.Print(WarningColor)
 	fmt.Print(msg...)
 	fmt.Print(NoneColor)
 }
 
-func (l *Logger) Warningln(msg ...any) {
+func (l Logger) Warningln(msg ...any) {
 	fmt.Print(WarningColor)
 	fmt.Println(msg...)
 	fmt.Print(NoneColor)
 }
 
-func (l *Logger) Warningf(msg string, args ...any) {
+func (l Logger) Warningf(msg string, args ...any) {
 	fmt.Print(WarningColor)
 	fmt.Printf(msg, args...)
 	fmt.Print(NoneColor)
 }
 
-func (l *Logger) Error(msg ...any) {
+func (l Logger) Error(msg ...any) {
 	fmt.Print(ErrorColor)
 	fmt.Print(msg...)
 	fmt.Print(NoneColor)
 }
 
-func (l *Logger) Errorln(msg ...any) {
+func (l Logger) Errorln(msg ...any) {
 	fmt.Print(ErrorColor)
 	fmt.Println(msg...)
 	fmt.Print(NoneColor)
 }
 
-func (l *Logger) Errorf(msg string, args ...any) {
+func (l Logger) Errorf(msg string, args ...any) {
 	fmt.Print(ErrorColor)
 	fmt.Printf(msg, args...)
 	fmt.Print(NoneColor)
 }
 
-func (l *Logger) PrintBanner(msg ...any) {
+func (l Logger) PrintBanner(msg ...any) {
 	fmt.Print(BannerColor)
 	fmt.Println(msg...)
 	fmt.Print(NoneColor)
 }
 
-func (l *Logger) SInfof(msg string, args ...any) string {
+func (l Logger) SInfof(msg string, args ...any) string {
 	fmt.Print(NoneColor)
 	return fmt.Sprintf(InfoColor+msg, args...)
 }

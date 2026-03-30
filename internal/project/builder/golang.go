@@ -19,10 +19,11 @@ const (
 //go:embed templates/go.mod.tmpl
 var goModTemplate string
 
-func createGoMod(ctx context.Context, rc *RootCmd) error {
+// createGoMod literally just creates the 'go.mod'
+func createGoMod(ctx context.Context, rc RootCmd) error {
 	name := path.Join(rc.projectName, GoModFile)
 
-	if !validatePath(rc.projectName) {
+	if !isRoot(rc.projectName) {
 		// If the directory already exists, the system will delete the old dir...
 		// to prevent this, we are ignoring the error... But I still want to find
 		// a way to handle this... For now, this approach works.
@@ -48,7 +49,7 @@ func createGoMod(ctx context.Context, rc *RootCmd) error {
 
 	templateData := make(map[string]string)
 	templateData["ProjectName"] = rc.projectName
-	if validatePath(rc.projectName) {
+	if isRoot(rc.projectName) {
 		dir, _ := os.Getwd()
 		templateData["ProjectName"] = filepath.Base(dir)
 	}
@@ -62,11 +63,13 @@ func createGoMod(ctx context.Context, rc *RootCmd) error {
 	return nil
 }
 
-func addGolangCompose(rc *RootCmd) error {
+// addGolangCompose writes into the docker compose the Golang service if the user
+// has one
+func addGolangCompose(rc RootCmd) error {
 	f, err := os.OpenFile(
 		path.Join(rc.projectName, DockerCompose),
 		os.O_RDWR|os.O_APPEND,
-		OwnerPropertyMode,
+		DefaultFileMode,
 	)
 	if err != nil {
 		return err
@@ -97,6 +100,7 @@ func addGolangCompose(rc *RootCmd) error {
 	return nil
 }
 
-func validatePath(src string) bool {
+// isRoot checks if the project name is one of the valid inputs for a root dir.
+func isRoot(src string) bool {
 	return src == "" || src == "." || src == "/" || src == "./"
 }

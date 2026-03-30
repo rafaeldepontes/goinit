@@ -14,8 +14,8 @@ import (
 	"github.com/rafaeldepontes/gini/internal/project/builder/templates"
 )
 
-// DockerFlow handles the logic behind the docker-compose and the dockerfile, it appears only once at the start.
-func databaseFlow(ctx context.Context, rc *RootCmd) error {
+// databaseFlow handles the logic behind the docker-compose and the dockerfile, it appears only once at the start.
+func databaseFlow(ctx context.Context, rc RootCmd) error {
 	want, err := hasDatabase(ctx, rc.Log)
 	if err != nil {
 		return err
@@ -66,7 +66,7 @@ func databaseFlow(ctx context.Context, rc *RootCmd) error {
 	return nil
 }
 
-func askDatabase(log *log.Logger) ([]string, error) {
+func askDatabase(log log.Logger) ([]string, error) {
 	var databaseOptions = map[int]string{
 		1: "PostgreSQL",
 		2: "MySQL",
@@ -102,11 +102,11 @@ func askDatabase(log *log.Logger) ([]string, error) {
 	return choices, nil
 }
 
-func createCompose(rc *RootCmd, compose []byte, dbName string) error {
+func createCompose(rc RootCmd, compose []byte, dbName string) error {
 	f, err := os.OpenFile(
 		path.Join(rc.projectName, DockerCompose),
 		os.O_RDWR|os.O_APPEND,
-		OwnerPropertyMode,
+		DefaultFileMode,
 	)
 	if err != nil {
 		return err
@@ -125,7 +125,7 @@ func createCompose(rc *RootCmd, compose []byte, dbName string) error {
 }
 
 // hasDatabase checks to see if the user want or not a database in their docker-compose.
-func hasDatabase(ctx context.Context, log *log.Logger) (bool, error) {
+func hasDatabase(ctx context.Context, log log.Logger) (bool, error) {
 	log.InfoPrefix(">>", " Do you want a database on your docker-compose? (y/n) ")
 
 	ans, err := scanLine(ctx)
@@ -137,11 +137,11 @@ func hasDatabase(ctx context.Context, log *log.Logger) (bool, error) {
 	return ans == "y", nil
 }
 
-func createGenericCompose(rc *RootCmd, compose []byte, serviceName string) error {
+func createGenericCompose(rc RootCmd, compose []byte, serviceName string) error {
 	f, err := os.OpenFile(
 		path.Join(rc.projectName, DockerCompose),
 		os.O_RDWR|os.O_APPEND,
-		OwnerPropertyMode,
+		DefaultFileMode,
 	)
 	if err != nil {
 		return err

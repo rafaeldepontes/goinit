@@ -18,7 +18,8 @@ var brokerOptions = map[int]string{
 	2: "Kafka",
 }
 
-func messageBrokerFlow(ctx context.Context, rc *RootCmd) error {
+// messageBrokerFlow is almost identical to the database flow, go check it.
+func messageBrokerFlow(ctx context.Context, rc RootCmd) error {
 	want, err := hasMessageBroker(ctx, rc.Log)
 	if err != nil {
 		return err
@@ -62,7 +63,7 @@ func messageBrokerFlow(ctx context.Context, rc *RootCmd) error {
 	return nil
 }
 
-func askMessageBroker(log *log.Logger) ([]string, error) {
+func askMessageBroker(log log.Logger) ([]string, error) {
 	for i := 1; i <= len(brokerOptions); i++ {
 		log.InfoPrefixf(">>>>", " [%d] %s\n", i, brokerOptions[i])
 	}
@@ -91,7 +92,7 @@ func askMessageBroker(log *log.Logger) ([]string, error) {
 }
 
 // hasDatabase checks to see if the user want or not a database in their docker-compose.
-func hasMessageBroker(ctx context.Context, log *log.Logger) (bool, error) {
+func hasMessageBroker(ctx context.Context, log log.Logger) (bool, error) {
 	want, err := askUser(ctx, log, " Do you want a message broker on your docker-compose? (y/n) ")
 	if err != nil {
 		return false, err
