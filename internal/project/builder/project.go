@@ -14,7 +14,7 @@ import (
 var LongDescription string = `Build the project and put it into a new directory, if finished earlier it will delete every single change so far. Otherwise, it will create the docker-compose and Dockerfile if wanted and the "go.mod" file`
 
 const (
-	Version              = "1.0.17"
+	Version              = "1.0.18"
 	Name                 = "Gini"
 	DefaultFileMode      = 0644
 	DefaultDirectoryMode = 0755
