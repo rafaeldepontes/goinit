@@ -143,9 +143,12 @@ func (rc RootCmd) Update() *cobra.Command {
 			module := "github.com/rafaeldepontes/gini"
 
 			installCmd := exec.CommandContext(ctx, "go", "install", module+"@latest")
-			out, err := installCmd.CombinedOutput()
-			if err != nil {
-				return fmt.Errorf("go install failed: %w: %s", err, string(out))
+
+			installCmd.Stdout = os.Stdout
+			installCmd.Stderr = os.Stderr
+
+			if err := installCmd.Run(); err != nil {
+				return fmt.Errorf("go install failed: %w", err)
 			}
 
 			fmt.Println("Updated successfully!")
