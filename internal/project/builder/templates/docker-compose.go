@@ -33,7 +33,7 @@ var PostgresCompose = []byte(
 		"      mode: replicated\n" +
 		"      replicas: 1\n" +
 		"    volumes:\n" +
-		"      - postgres:/var/lib/postgresql/data\n\n",
+		"      - postgres:/var/lib/postgresql\n\n",
 )
 
 var MySQLCompose = []byte(
