@@ -31,8 +31,7 @@ func main() {
 func revert(cmd *builder.RootCmd) {
 	cmd.Log.Infoln("reverting changes.")
 	if err := cmd.RevertChanges(); err != nil {
-		var pathErr *os.PathError
-		if errors.As(err, &pathErr) {
+		if _, is := errors.AsType[*os.PathError](err); is {
 			cmd.Log.Errorln("[ERROR] cannot delete root directory...")
 			return
 		}
