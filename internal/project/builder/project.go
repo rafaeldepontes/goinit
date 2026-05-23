@@ -123,6 +123,8 @@ func (rc *RootCmd) BuildProject() *cobra.Command {
 			if err := createGitEnv(ctx, *rc); err != nil {
 				return err
 			}
+
+			rc.Log.Infoln("Build completed successfully")
 			return nil
 		},
 	}
