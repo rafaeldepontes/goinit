@@ -1,7 +1,7 @@
 # Gini
 
 [![Language](https://img.shields.io/badge/language-Go-00ADD8?labelColor=2F2F2F)](https://go.dev/doc/)
-[![Version](https://img.shields.io/badge/version-1.26-9C27B0?labelColor=2F2F2F)](https://go.dev/doc/install)
+[![Version](https://img.shields.io/badge/version-1.27-9C27B0?labelColor=2F2F2F)](https://go.dev/doc/install)
 [![Go Reference](https://pkg.go.dev/badge/github.com/rafaeldepontes/gini.svg)](https://pkg.go.dev/github.com/rafaeldepontes/gini)
 
 Gini is an open-source CLI tool that speeds up Go project setup by generating a clean, structured project layout with sensible defaults and essential tooling.
@@ -51,7 +51,7 @@ Make sure `$GOPATH/bin` is included in your `$PATH`.
 
 ## Requirements
 
-- Go 1.26.0 or newer
+- Go 1.27.0 or newer
 
 ---
 

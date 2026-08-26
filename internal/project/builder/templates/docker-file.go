@@ -1,7 +1,7 @@
 package templates
 
 var DockerFile = []byte(
-	"FROM golang:1.26-alpine AS build\n\n" +
+	"FROM golang:1.27-alpine AS build\n\n" +
 		"WORKDIR /cmd\n\n" +
 		"COPY go.mod go.sum ./\n" +
 		"RUN go mod download\n\n" +
